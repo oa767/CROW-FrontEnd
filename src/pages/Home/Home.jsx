@@ -15,6 +15,9 @@ export default function Home(){
         <p className="quote">"A list is only as strong as its weakest link"</p>
         <p className="quote-author">- Donald Knuth</p>
       </div>
+      <button className="button">
+	Create a Private Chat Room
+      </button>
       <button
         onClick={() => navigateToPage('/rooms')}
         className="page-button"
