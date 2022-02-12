@@ -18,7 +18,7 @@ export default function Rooms() {
   const history = useHistory();
 
   useEffect(() => {
-    axios.get('https://demo-repo23.herokuapp.com/rooms/list')
+    axios.get('https://crow249.herokuapp.com/rooms/list')
       .then((response) => {
         console.log(response.data);
         if (response.data){
@@ -32,7 +32,7 @@ export default function Rooms() {
   }, [refresh])
 
   const handleCreateRoom = () => {
-    axios.post(`https://demo-repo23.herokuapp.com/rooms/create/${newRoomName}`)
+    axios.post(`https://crow249.herokuapp.com/rooms/create/${newRoomName}`)
       .then(() => {
         setIsModalOpen(false);
         setRefresh(refresh + 1);
