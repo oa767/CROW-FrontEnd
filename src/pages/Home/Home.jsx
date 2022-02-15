@@ -19,7 +19,7 @@ export default function Home(){
 	Create a Private Chat Room
       </button>
       <button
-	onClick={() => navigateToPage('/username')}
+	onClick={() => navigateToPage('/usernames')}
 	className="page-button"
       >
 	Join a Random Room
