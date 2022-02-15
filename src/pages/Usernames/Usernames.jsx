@@ -34,5 +34,6 @@ export default function Username() {
       <button className="username-item">
         Default Username #10
       </button>
+    </div>
   );
 };
