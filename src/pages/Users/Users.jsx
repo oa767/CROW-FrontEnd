@@ -77,9 +77,9 @@ export default function Users() {
         {users ? users.map((user, index) => (
           <div 
             className="user-item"
-            key={`${user.userName}-${index}`}
+            key={`${user.user_name}-${index}`}
           >
-            <p>{user.userName}</p>
+            <p>{user.user_name}</p>
             <p>{index}</p>
           </div>
         )) : (

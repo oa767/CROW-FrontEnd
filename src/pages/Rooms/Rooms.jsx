@@ -79,8 +79,8 @@ export default function Rooms() {
       <div className="rooms-list">
         {rooms ? rooms.map((room, index) => (
           <RoomItem
-            key={`${room.roomName}-${index}`}
-            name={room.roomName}
+            key={`${room.room_name}-${index}`}
+            name={room.room_name}
             userCount={room.num_users}
           />
         )) : (
