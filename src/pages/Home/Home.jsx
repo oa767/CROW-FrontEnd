@@ -9,12 +9,12 @@ export default function Home(){
   }
 
   return (
-	  {/* The home page has 4 key functions as the introduction to the website
+	  /* The home page has 4 key functions as the introduction to the website
 		1. It shows users  a list of chat rooms that they can join, center of the screen	
 		2. It gives them an option to create their own room, sidebar
 		3. It gives them an option to create a private room, sidebar
 		4. It shows them a list of user names they can choose from before entering any room.
-			 */}
+			 */
     <div className="content">
       <h1> CROW Chat </h1>
       <div>
