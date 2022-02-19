@@ -24,12 +24,12 @@ function App() {
             <Route exact={true} path={'/users'}>
               <Users />
             </Route>
-						<Route exact={true} path={'/usernames'}>
-							<Usernames />
-						</Route>
-	    			<Route exact={true} path={'/usernameChoice'}>
-	      			<UsernameChoice />
-	    			</Route>
+	    <Route exact={true} path={'/usernames'}>
+	      <Usernames />
+            </Route>
+	    <Route exact={true} path={'/usernameChoice'}>
+	      	<UsernameChoice />
+	    </Route>
           </Switch>
         </Router>
       </div>
