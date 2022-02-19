@@ -28,7 +28,7 @@ function App() {
 	      <Usernames />
             </Route>
 	    <Route exact={true} path={'/usernameChoice'}>
-	      	<UsernameChoice />
+	      <UsernameChoice />
 	    </Route>
           </Switch>
         </Router>
