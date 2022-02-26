@@ -11,6 +11,11 @@ import './App.css';
 
 function App() {
   return (
+	  /* Interface for the website
+	  Goals:
+	  	-Sidebar for buttons
+		-chatrooms in the middle
+	  */
     <div className="root">
       <div className="content">
         <Router>
