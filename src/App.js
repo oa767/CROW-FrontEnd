@@ -6,6 +6,7 @@ import Rooms from './pages/Rooms/Rooms';
 import Users from './pages/Users/Users';
 import Usernames from './pages/Usernames/Usernames';
 import UsernameChoice from './pages/UsernameChoice/UsernameChoice';
+import Chatroom from './pages/Chatroom/Chatroom';
 
 import './App.css';
 
@@ -35,6 +36,9 @@ function App() {
 	    <Route exact={true} path={'/usernameChoice'}>
 	      <UsernameChoice />
 	    </Route>
+            <Route exact={true} path={'/chatroom'}>
+              <Chatroom />
+            </Route>
           </Switch>
         </Router>
       </div>
