@@ -1,4 +1,32 @@
+import {useHistory} from 'react-router-dom';
+import React from 'react';
+
 import './usernames.css';
+
+const leftUsernames = ["Default #1", "Default #2", "Default #3", "Default #4", "Default #5"];
+const rightUsernames = ["Default #6", "Default #7", "Default #8", "Default #9", "Default #10"];
+
+function makeButtons() {
+  var element = document.getElementById('left');
+
+  for (var i = 0; i < leftUsernames.length; ++i) {
+    let button = document.createElement('button');
+    button.className = "username-item";     
+    button.innerHTML = leftUsernames[i];
+    element.append(button);
+  }
+  
+  var newElement = document.getElementById('right');
+
+  for (var j = 0; j < rightUsernames.length; ++j) {
+    let button = document.createElement('button');
+    button.className = "username-item";     
+    button.innerHTML = rightUsernames[j];
+    newElement.append(button);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", makeButtons);
 
 export default function Username() {
   return (
@@ -8,38 +36,14 @@ export default function Username() {
 	  The random user name that is selected must be unique from all other users
 	  in the chatroom.
 	  	*/
-    <div className="content">
-      <h3> Choose a username </h3>
-      <button className="username-item">
-	Default Username #1
-      </button>
-      <button className="username-item">
-        Default Username #2
-      </button>
-      <button className="username-item">
-        Default Username #3
-      </button>
-      <button className="username-item">
-        Default Username #4
-      </button>
-      <button className="username-item">
-        Default Username #5
-      </button>
-      <button className="username-item">
-        Default Username #6
-      </button>
-      <button className="username-item">
-        Default Username #7
-      </button>
-      <button className="username-item">
-        Default Username #8
-      </button>      
-      <button className="username-item">
-        Default Username #9
-      </button>
-      <button className="username-item">
-        Default Username #10
-      </button>
+    <div className="wrapper user">
+      <div className="wrapper title">
+        <h3> Choose a username </h3>
+      </div>
+      <div className="listWrapper">
+        <div className="content user" id="left"></div>
+        <div className="content user" id="right"></div>
+      </div>
     </div>
   );
 };
