@@ -11,7 +11,9 @@ export default function Users() {
   const [refresh, setRefresh] = useState(0);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [newUserName, setNewUserName] = useState('');
+  const [userToDelete, setUserToDelete] = useState('');
 
   const history = useHistory();
 
@@ -39,7 +41,19 @@ export default function Users() {
         console.log(error);
       })
   }
-
+  
+  const handleDeleteUser = () => {
+    axios.post(`https://crow249.herokuapp.com/users/delete/${userToDelete}`)
+      .then(() => {
+        setIsDeleteOpen(false);
+        setRefresh(refresh + 1);
+      })
+      .catch(error => {
+        setError(error);
+        console.log(error);
+      })
+  }
+  
   return (
     <div className="content">
       {isModalOpen && 
@@ -56,7 +70,16 @@ export default function Users() {
           </div>
         </div>
       }
-  
+      
+      {isDeleteOpen &&
+        <div className="create-modal">
+          <div className="create-actions">         
+            <button className="button" onClick={handleDeleteUser}> Delete User</button>
+            <button className="button" onClick={() => setIsDeleteOpen(false)}> Cancel </button>
+          </div>
+        </div>
+      }
+
       <div className="rooms-header">
         <h1>Users</h1>
         <button
@@ -78,7 +101,11 @@ export default function Users() {
           <div 
             className="user-item"
             key={`${user.user_name}-${index}`}
-          >
+            onClick={() => {
+              setUserToDelete(user.user_name);
+    	      setIsDeleteOpen(true);
+            }}
+	  >
             <p>{user.user_name}</p>
             <p>{index}</p>
           </div>
@@ -89,7 +116,7 @@ export default function Users() {
         )}
       </div>
 
-      <div>
+      <div style={{paddingBottom: "125px"}}>
         <button className="page-button" onClick={() => setIsModalOpen(true)}> Add New User </button>
       </div>
     </div>

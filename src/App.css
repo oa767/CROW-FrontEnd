@@ -12,6 +12,7 @@
 
 .wrapper {
   position: relative;
+  width: 100vw;
 }
 
 .content {
@@ -57,7 +58,6 @@
   padding-top: 16px;
   padding-bottom: 16px;
   background-color: #173245;
-  width: 100vw;
 }
 
 .privateRoomButton {

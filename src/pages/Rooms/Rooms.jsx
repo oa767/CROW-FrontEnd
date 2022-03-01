@@ -13,7 +13,9 @@ export default function Rooms() {
   const [refresh, setRefresh] = useState(undefined);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [newRoomName, setNewRoomName] = useState('');
+  const [roomToDelete, setRoomToDelete] = useState('');
 
   const history = useHistory();
 
@@ -42,6 +44,18 @@ export default function Rooms() {
         console.log(error);
       })
   }
+  
+  const handleDeleteRoom= () => {
+    axios.post(`https://crow249.herokuapp.com/rooms/delete/${roomToDelete}`)
+      .then(() => {
+        setIsDeleteOpen(false);
+        setRefresh(refresh + 1);
+      })
+      .catch(error => {
+        setError(error);
+        console.log(error);
+      })
+  }
 
   return (
     <div className="content">
@@ -56,6 +70,15 @@ export default function Rooms() {
           <div className="create-actions">
             <button className="button" onClick={handleCreateRoom}>Create New Room</button>
             <button className="button" onClick={() => setIsModalOpen(false)}> Cancel </button>
+          </div>
+        </div>
+      }
+
+      {isDeleteOpen &&
+        <div className="create-modal">
+          <div className="create-actions">
+            <button className="button" onClick={handleDeleteRoom}> Delete User</button>
+            <button className="button" onClick={() => setIsDeleteOpen(false)}> Cancel </button>
           </div>
         </div>
       }
@@ -78,18 +101,24 @@ export default function Rooms() {
 
       <div className="rooms-list">
         {rooms ? rooms.map((room, index) => (
-          <RoomItem
-            key={`${room.room_name}-${index}`}
-            name={room.room_name}
-            userCount={room.num_users}
-          />
+	  <div
+	    className="room-item"
+	    key={`${room.room_name}-${index}`}
+	    onClick={() => {
+              setRoomToDelete(room.room_name);
+              setIsDeleteOpen(true);
+            }}          
+	  >
+            <p> {room.room_name} </p>
+            <p> {room.num_users} </p>
+          </div>
         )) : (
           <div className="rooms-empty">
             <p>Sorry there are no rooms right now... Come back later </p>
           </div>
         )}
       </div>
-      <div>
+      <div style={{paddingBottom: "125px"}}>
         <button className="page-button" onClick={() => setIsModalOpen(true)}> Add New Room </button>
       </div>
     </div>

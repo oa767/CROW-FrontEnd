@@ -6,10 +6,12 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  background-color: #FFFFFF;
+  cursor: pointer;
 }
 
 .create-modal {
-  position: absolute;
+  position: fixed;
   z-index: 1000;
   width: 400px;
   height: 200px;

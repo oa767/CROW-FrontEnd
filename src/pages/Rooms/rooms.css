@@ -10,6 +10,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  color: #FFFFFF;
+  padding-top: 125px;
 }
 
 .rooms-list {
@@ -20,7 +22,7 @@
 }
 
 .create-modal {
-  position: absolute;
+  position: fixed;
   top: 40%;
   z-index: 1000;
   width: 400px;
