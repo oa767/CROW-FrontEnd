@@ -1,5 +1,6 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {useHistory} from 'react-router-dom';
+import axios from 'axios';
 
 import './home.css';
 
@@ -8,6 +9,19 @@ export default function Home(){
 
   function navigateToPage(path) {
     history.push(path);
+  }
+
+  const [error, setError] = useState(undefined);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [roomName, setRoomName] = useState('');
+  const [username, setUsername] = useState('');
+
+  const handleCreateRoom = () => {
+    localStorage.setItem('roomName', roomName);
+    localStorage.setItem('username', username);
+    setIsModalOpen(false);
+    navigateToPage('/chatroom');
   }
 
   return (
@@ -20,13 +34,36 @@ export default function Home(){
     <>
       <div className="wrapper">
         <div className="topBar">
-          <button className="privateRoomButton">
+          <button 
+	    onClick={() => setIsModalOpen(true)}
+	    className="privateRoomButton"
+	  >
             Create a Private Room
           </button>
         </div>
       </div>
       <div className="wrapper">
         <div className="content homepage">
+          {isModalOpen &&
+            <div className="createRoomModal">
+              <input
+                className="roomNameInput"
+                placeholder="Room Name"
+                value={roomName}
+                onChange={(e) => setRoomName(e.target.value)}
+              />
+	      <input
+		className="usernameInput"
+		placeholder="Username"
+		value={username}
+		onChange={(e) => setUsername(e.target.value)}
+	      />
+              <div className="create-actions">
+                <button className="button" onClick={handleCreateRoom}>Create Room</button>
+                <button className="button" onClick={() => setIsModalOpen(false)}> Cancel</button>
+              </div>
+            </div>
+          }
           <h1> CROW Chat </h1>
           <button
 	    onClick={() => navigateToPage('/usernameChoice')}
