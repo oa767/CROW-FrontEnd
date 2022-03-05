@@ -26,7 +26,7 @@ export default function UsernameChoice() {
         Choose for me
       </button>
       <button
-        onClick={() => navigateToPage('/usernames')}
+        onClick={() => navigateToPage('/usernameChoice/usernames')}
 	className="page-button home"
       >
 	Pick a Default Username

@@ -36,7 +36,7 @@ export default function Username() {
             <div
               className="username-item"
               key={`${username}`}
-              onClick={() => history.push('/chatroom')}
+              onClick={() => history.push('usernameChoice/usernames/chatroom')}
             >
               <p> {username} </p>
             </div>
