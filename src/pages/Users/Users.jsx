@@ -55,31 +55,7 @@ export default function Users() {
   }
   
   return (
-    <div className="content">
-      {isModalOpen && 
-        <div className="create-modal">
-          <input
-            className="user-input"
-            placeholder="User Name"
-            value={newUserName}
-            onChange={(e) => setNewUserName(e.target.value)}
-          />
-          <div className="create-actions">
-            <button className="button" onClick={handleCreateUser}>Create New User</button>
-            <button className="button" onClick={() => setIsModalOpen(false)}> Cancel </button>
-          </div>
-        </div>
-      }
-      
-      {isDeleteOpen &&
-        <div className="create-modal">
-          <div className="create-actions">         
-            <button className="button" onClick={handleDeleteUser}> Delete User</button>
-            <button className="button" onClick={() => setIsDeleteOpen(false)}> Cancel </button>
-          </div>
-        </div>
-      }
-
+    <>
       <div className="rooms-header">
         <h1>Users</h1>
         <button
@@ -97,6 +73,29 @@ export default function Users() {
       )}
 
       <div className="rooms-list">
+	{isModalOpen &&
+          <div className="create-modal">
+            <input
+              className="user-input"
+              placeholder="User Name"
+              value={newUserName}
+              onChange={(e) => setNewUserName(e.target.value)}
+            />
+            <div className="create-actions">
+              <button className="button" onClick={handleCreateUser}>Create New User</button>
+              <button className="button" onClick={() => setIsModalOpen(false)}> Cancel </button>
+            </div>
+          </div>
+        }
+        {isDeleteOpen &&
+          <div className="create-modal">
+            <div className="create-actions">
+              <button className="button" onClick={handleDeleteUser}> Delete User</button>
+              <button className="button" onClick={() => setIsDeleteOpen(false)}> Cancel </button>
+            </div>
+          </div>
+        }
+
         {users ? users.map((user, index) => (
           <div 
             className="user-item"
@@ -115,10 +114,9 @@ export default function Users() {
           </div>
         )}
       </div>
-
-      <div style={{paddingBottom: "125px"}}>
+      <div style={{paddingBottom: "125px", width: "300px", alignItems: "center", margin: "auto", paddingTop: "20px"}}>
         <button className="page-button" onClick={() => setIsModalOpen(true)}> Add New User </button>
       </div>
-    </div>
+    </>
   )
 }

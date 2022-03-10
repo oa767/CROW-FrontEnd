@@ -14,13 +14,21 @@ export default function Username() {
 	  a room the website should give them a random one from this set of names. 
 	  The random user name that is selected must be unique from all other users
 	  in the chatroom.
-	  	*/
-    <div className="wrapper user">
-      <div className="wrapper title">
-        <h3> Choose a username </h3>
+    	  	*/
+    <>
+      <div style={{paddingTop: "150px", paddingBottom: "20px"}}>
+        <button
+          onClick={() => history.push('./')}
+          className="button usernames"
+        >
+          {"<--"}Go Back
+        </button>
       </div>
-      <div className="listWrapper">
-        <div className="content user">
+
+      <h3 style={{color: "white", textAlign: "center"}}> Choose a Username </h3>
+
+      <div className="listContainer">
+        <div className="buttonContainer usernames">
 	  {leftUsernames.map((username) => (
 	    <div 
 	      className="username-item"
@@ -31,18 +39,18 @@ export default function Username() {
 	    </div>
           ))}
         </div>	
-	<div className="content user">
+	<div className="buttonContainer usernames">
           {rightUsernames.map((username) => (
             <div
               className="username-item"
               key={`${username}`}
-              onClick={() => history.push('usernameChoice/usernames/chatroom')}
+              onClick={() => history.push('/chatroom')}
             >
               <p> {username} </p>
             </div>
           ))}
         </div>
       </div>
-    </div>
+    </>
   );
 };

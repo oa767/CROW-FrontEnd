@@ -16,12 +16,7 @@
 }
 
 .content {
-  width: 400px;
-  display: flex;
-  flex-direction: column;
-  margin: auto;
-  align-items: center;
-  gap: 2rem;
+  width: 100vw;
 }
 
 .page-button {
@@ -58,6 +53,8 @@
   padding-top: 16px;
   padding-bottom: 16px;
   background-color: #173245;
+  flex-direction: row;
+  display: flex;
 }
 
 .privateRoomButton {
