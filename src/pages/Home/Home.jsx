@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {useHistory} from 'react-router-dom';
 import axios from 'axios';
 
@@ -11,19 +11,30 @@ export default function Home(){
     history.push(path);
   }
 
-  const [error, setError] = useState(undefined);
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [roomName, setRoomName] = useState('');
   const [username, setUsername] = useState('');
-
-  const handleCreateRoom = () => {
-    localStorage.setItem('roomName', roomName);
-    localStorage.setItem('username', username);
-    setIsModalOpen(false);
-    navigateToPage('/chatroom');
+  
+  const handleCreateRoomUser = () => {
+    axios.post(`https://crow249.herokuapp.com/rooms/create/${roomName}`)
+      .then(() => {
+        localStorage.setItem('roomName', roomName);
+      })
+      .catch(error => {
+        console.log(error);
+      })
+    axios.post(`https://crow249.herokuapp.com/users/create/${username}`)
+      .then(() => {
+	localStorage.setItem('username', username);
+        setIsModalOpen(false);
+	localStorage.setItem('private room', true);
+        navigateToPage('/chatroom');
+      })
+      .catch(error => {
+        console.log(error);
+      })
   }
-
+  
   return (
 	  /* The home page has 4 key functions as the introduction to the website
 		1. It shows users  a list of chat rooms that they can join, center of the screen	
@@ -40,49 +51,54 @@ export default function Home(){
 	  >
             Create a Private Room
           </button>
+          <div className="topBarTitle"> Crow </div>
         </div>
       </div>
       <div className="wrapper">
         <div className="content homepage">
           {isModalOpen &&
             <div className="createRoomModal">
-              <input
-                className="roomNameInput"
-                placeholder="Room Name"
-                value={roomName}
-                onChange={(e) => setRoomName(e.target.value)}
-              />
-	      <input
-		className="usernameInput"
-		placeholder="Username"
-		value={username}
-		onChange={(e) => setUsername(e.target.value)}
-	      />
-              <div className="create-actions">
-                <button className="button" onClick={handleCreateRoom}>Create Room</button>
-                <button className="button" onClick={() => setIsModalOpen(false)}> Cancel</button>
+	      <div className="modalContent">
+                <input
+                  className="roomNameInput"
+                  placeholder="Room Name"
+                  value={roomName}
+                  onChange={(e) => setRoomName(e.target.value)}
+                />
+                <input
+                  className="usernameInput"
+                  placeholder="Username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                />
+                <div className="create-actions">
+                  <button className="button" onClick={handleCreateRoomUser}>Create Room</button>
+                  <button className="button" onClick={() => setIsModalOpen(false)}> Cancel</button>
+                </div>
               </div>
-            </div>
+	    </div>
           }
-          <h1> CROW Chat </h1>
-          <button
-	    onClick={() => navigateToPage('/usernameChoice')}
-	    className="page-button home"
-          >
-	    Join a Random Room
-          </button>
-          <button
-            onClick={() => navigateToPage('/rooms')}
-            className="page-button home"
-          >
-            View All Rooms
-          </button>
-          <button
-            onClick={() => navigateToPage('/users')}
-            className="page-button home"
-          >
-            View All Users
-          </button> 
+  	  <div className="homeImage"></div>
+          <div className="buttonContainer">
+            <button
+	      onClick={() => navigateToPage('/usernameChoice')}
+	      className="homePageButton"
+            >
+	      Join a Random Room
+            </button>
+            <button
+              onClick={() => navigateToPage('/rooms')}
+              className="homePageButton"
+            >
+              View All Rooms
+            </button>
+            <button
+              onClick={() => navigateToPage('/users')}
+              className="homePageButton"
+            >
+              View All Users
+            </button> 
+          </div>
         </div>
       </div>
     </>

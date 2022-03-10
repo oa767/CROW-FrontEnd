@@ -1,38 +1,58 @@
 .content.homepage {
-  padding-top: 150px;
-  padding-bottom: 200px;
-  color: #ffffff;
+  display: flex;
+  flex-direction: row;
 }
 
-.page-button.home {
+.buttonContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  color: white;
+  padding: 150px;
+  padding-top: 125px;
+}  
+
+.homePageButton {
   background-color: #246964;
   color: #ffffff;
-  font-size: 14px;
-  font-weight: 200px;
+  font-size: 16px;
   border: 1px solid #16413D;
+  height: 100px;
+  width: 200px;
+  border-radius: 20px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left: 10px;
+  padding-right: 10px;
+  cursor: pointer;
+  word-wrap: break-word;
 }
 
-.page-button.home:hover {
+.homePageButton:hover {
   background-color: #315C59;
 }
 
 .createRoomModal {
-  position: fixed;
-  top: 30%;
-  z-index: 1000;
+  position: absolute;
+  display: block;
+  top: 23%;
+  left: 35.2%;
+  z-index: 9999;
   width: 400px;
   height: 300px;
   padding: 20px;
   background-color: white;
   border: 1px solid gray;
-  border-radius: 3px;
+  border-radius: 30px;
+}
+
+.modalContent {
   display: flex;
   flex-direction: column;
+  gap: 10px;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  border-radius: 30px;
-  margin: auto;
+  height: 268px;
 }
 
 .roomNameInput {
@@ -49,4 +69,33 @@
   border-radius: 7px;
   font-size: 16px;
   padding: 5px;
+}
+
+.homeImage {
+  width: 750px;
+  height: 497px;
+  background: url('./homeLogo.png');
+}
+
+@font-face {
+  font-family: 'Mael';
+  src: url('Mael.eot');
+  src: url('Mael.eot?#iefix') format('embedded-opentype'),
+      url('Mael.woff') format('woff'),
+      url('Mael.ttf') format('truetype'),
+      url('Mael.svg#Mael') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+} 
+
+.topBarTitle {
+  font-family: 'Mael';
+  color: white;
+  font-size: 36px;
+  margin-top: -16px;
+  margin-bottom: -16px;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  margin-left: 33%;
 }
