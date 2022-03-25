@@ -4,8 +4,8 @@ import React from 'react';
 import './usernames.css';
 
 export default function Username() {
-  const leftUsernames = ["Default #1", "Default #2", "Default #3", "Default #4", "Default #5"];
-  const rightUsernames = ["Default #6", "Default #7", "Default #8", "Default #9", "Default #10"];
+  const leftUsernames = ["Crow", "Owl", "Raven", "Eagle", "Sparrow"];
+  const rightUsernames = ["Penguin", "Flamingo", "Crane", "Hummingbird", "Dove"];
   const history = useHistory();
 
   return (

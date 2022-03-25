@@ -14,7 +14,7 @@ export default function Home(){
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [roomName, setRoomName] = useState('');
   const [username, setUsername] = useState('');
-  
+
   const handleCreateRoomUser = () => {
     axios.post(`https://crow249.herokuapp.com/rooms/create/${roomName}`)
       .then(() => {
@@ -28,7 +28,18 @@ export default function Home(){
 	localStorage.setItem('username', username);
         setIsModalOpen(false);
 	localStorage.setItem('private room', true);
-        navigateToPage('/chatroom');
+      })
+      .catch(error => {
+        console.log(error);
+      })
+    axios.get(`https://crow249.herokuapp.com/rooms/list`)
+      .then((response) => {
+	console.log(response.data);
+        localStorage.setItem('roomCode', response.data[response.data.length - 1]._id.$oid);
+        setRoomName('');
+ 	setUsername('');
+        setIsModalOpen('');
+        navigateToPage('/chatroom');	      
       })
       .catch(error => {
         console.log(error);
