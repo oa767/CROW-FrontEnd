@@ -1,21 +1,32 @@
-.roomName {
-  font-size: 20px;
-  text-align: center;
-  color: white;
+.content.chatroom {
+  display: flex;
+  flex-direction: row;
 }
 
-.wrapper.topBar {
-  z-index: 5;
+.topBarTitle.chatroom {
+  margin-left: 16px;
+  background: none;
+  border: none
 }
+
+.topBarTitle.chatroom:hover {
+  color: #c5ccd1;
+}
+
+.sideBarContainer {
+  width: 282px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}  
 
 .sidebar {
-  position: absolute;
-  top: 71px;
-  bottom: 16px;
-  left: 16px;
   width: 250px;
   border-radius: 25px;
   background-color: white;
+  margin: 16px;
+  margin-top: 25px;
+  height: 100%;
 }
 
 .sidebarContent {
@@ -25,34 +36,50 @@
   align-items: center;
   gap: 15px;
   padding-top: 32px;
+  overflow: scroll;
+}
+
+.chatContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+}
+
+.topBar.chat {
+  padding-bottom: 28px;
+  padding-top: 28px;
+}
+
+.roomName {
+  font-size: 20px;
+  color: white;
+  margin-left: 39.5%;
 }
 
 .chatbar {
-  position: absolute;
-  padding: 16px;
-  bottom: 16px;
-  left: 282px;
-  right: 16px;
-  height: 100px;
+  padding: 7px;
+  height: 75px;
   border-radius: 25px;
   background-color: #246964;
+  margin-right: 16px;
+  margin-bottom: 16px;
 }
 
 .chatInput {
   width: 100%;
   height: 100%;
-  border-radius: 16px;
+  border-radius: 25px;
   font-size: 16px;
   padding: 5px;
 }
 
 .chatWindow {
-  position: absolute;
-  top: 71px;
-  bottom: 132px;
-  right: 16px;
-  left: 282px;
+  height: 100%;
   border-radius: 25px;
   background-color: white;
-  min-height: 
+  margin-top: 25px;
+  margin-right: 16px;
+  margin-bottom: 16px;
 }
+

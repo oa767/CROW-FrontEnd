@@ -36,9 +36,6 @@ export default function Home(){
       .then((response) => {
 	console.log(response.data);
         localStorage.setItem('roomCode', response.data[response.data.length - 1]._id.$oid);
-        setRoomName('');
- 	setUsername('');
-        setIsModalOpen('');
         navigateToPage('/chatroom');	      
       })
       .catch(error => {
