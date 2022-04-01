@@ -8,28 +8,23 @@ export default function Chatroom() {
   const roomName = localStorage.getItem('roomName');
   const username = localStorage.getItem('username');
   const roomCode = localStorage.getItem('roomCode');
-
+ 
   const [users, setUsers] = useState(undefined);
 
   const history = useHistory();
 
-  const joinRoomGetUsers = async () => {
-    try {
-      const response = await axios.post(`https://crow249.herokuapp.com/rooms/join/${roomCode}/${username}`);
-      console.log(response);
-    } catch(error) {
-      console.log(error);
-    }
-
-    axios.get(`https://crow249.herokuapp.com/rooms/list`)
+  const joinRoomGetUsers = async() => {
+    await axios.post(`https://crow249.herokuapp.com/rooms/join/${roomCode}/${username}`)
       .then((response) => {
-        for (var i = 0; i < response.data.length; i++) {
-          if (response.data[i]._id.$oid == roomCode) {
-            setUsers(response.data[i].list_users);
-            console.log(response.data[i].list_users);
-            break;
-          }
-        }
+        console.log(response.data);
+      })
+      .catch(error => {
+        console.log(error);
+      })
+    axios.get(`https://crow249.herokuapp.com/users/list/${roomName}`)
+      .then((response) => {
+        console.log(response.data);
+	setUsers(response.data);
       })
       .catch(error => {
         console.log(error);
