@@ -21,7 +21,8 @@ export default function UsernameChoice() {
       .then(() => {
         setIsModalOpen(false);
  	localStorage.setItem('username', username);
-        history.push('/chatroom');
+        localStorage.setItem('private room', false);
+	navigateToPage('/chatroom');
       })
       .catch(error => {
         console.log(error);
@@ -41,20 +42,18 @@ export default function UsernameChoice() {
       <h3 style={{color: "white", textAlign: "center"}}> Let's pick a username </h3>
       <div className="buttonContainer choice">
         {isModalOpen &&
-          <form className="createUsernameModal">
+          <div className="createUsernameModal">
             <input
-	      type="text"
               className="usernameInput"
               placeholder="Username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-	      required
 	    />
             <div className="create-actions">
-              <button type="submit" className="button" onClick={createUser}> Go To Room </button>
+              <button className="button" onClick={createUser}> Go To Room </button>
               <button className="button" onClick={() => setIsModalOpen(false)}> Cancel </button>
             </div>
-          </form>
+          </div>
         }
         <button className="homePageButton choice">
           Choose for me

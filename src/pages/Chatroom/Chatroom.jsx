@@ -8,27 +8,38 @@ export default function Chatroom() {
   const roomName = localStorage.getItem('roomName');
   const username = localStorage.getItem('username');
   const roomCode = localStorage.getItem('roomCode');
- 
+  const privateRoom = JSON.parse(localStorage.getItem('private room')); 
+
   const [users, setUsers] = useState(undefined);
 
   const history = useHistory();
 
   const joinRoomGetUsers = async() => {
-    await axios.post(`https://crow249.herokuapp.com/rooms/join/${roomCode}/${username}`)
-      .then((response) => {
-        console.log(response.data);
-      })
-      .catch(error => {
-        console.log(error);
-      })
-    axios.get(`https://crow249.herokuapp.com/users/list/${roomName}`)
-      .then((response) => {
-        console.log(response.data);
-	setUsers(response.data);
-      })
-      .catch(error => {
-        console.log(error);
-      })
+   if (privateRoom) {
+     await axios.post(`https://crow249.herokuapp.com/rooms/join/${roomCode}/${username}`)
+       .then((response) => {
+         console.log(response.data);
+        })
+        .catch(error => {
+          console.log(error);
+        })
+     axios.get(`https://crow249.herokuapp.com/users/list/${roomName}`)
+       .then((response) => {
+         console.log(response.data);
+         setUsers(response.data);
+       })
+       .catch(error => {
+         console.log(error);
+       })
+   } else {
+     await axios.post(`https://crow249.herokuapp.com/rooms/join/${username}`)
+       .then((response) => {
+         console.log(response.data);
+        })
+        .catch(error => {
+          console.log(error);
+        })
+   }
   }
 
   useEffect(() => {
@@ -63,7 +74,7 @@ export default function Chatroom() {
       <div className="chatContainer">
         <div className="topBar chat">
           <div className="roomName"> {roomName} </div>
-          <h4 style={{color: "white", marginLeft: "225px"}}> {roomCode} </h4>
+          {privateRoom && <h4 style={{color: "white", marginLeft: "225px"}}> {roomCode} </h4>}
         </div>
         <div className="chatWindow"></div>
         <div className="chatbar">

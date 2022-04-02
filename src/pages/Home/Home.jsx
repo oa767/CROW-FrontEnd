@@ -12,6 +12,7 @@ export default function Home(){
   }
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCodeModalOpen, setIsCodeModalOpen] = useState(false);
   const [roomName, setRoomName] = useState('');
   const [username, setUsername] = useState('');
   const [roomCode, setRoomCode] = useState('');
@@ -26,9 +27,9 @@ export default function Home(){
       })
     axios.post(`https://crow249.herokuapp.com/users/create/${username}`)
       .then(() => {
-	localStorage.setItem('username', username);
+        localStorage.setItem('username', username);
         setIsModalOpen(false);
-	localStorage.setItem('private room', true);
+        localStorage.setItem('private room', true);
       })
       .catch(error => {
         console.log(error);
@@ -36,6 +37,18 @@ export default function Home(){
     axios.get(`https://crow249.herokuapp.com/rooms/${roomName}/id`)
       .then((response) => {
         localStorage.setItem('roomCode', response.data);
+        setRoomCode(response.data);
+	navigateToPage('/chatroom');
+      })
+      .catch(error => {
+        console.log(error);
+      })
+  }
+
+  const handleJoinWithCode = () => {
+    axios.post(`https://crow249.herokuapp.com/rooms/join/${roomCode}/${username}`)
+      .then((response) => {
+        localStorage.setItem('roomCode', roomCode);
         navigateToPage('/chatroom');
       })
       .catch(error => {
@@ -80,11 +93,33 @@ export default function Home(){
                   onChange={(e) => setUsername(e.target.value)}
                 />
                 <div className="create-actions">
-                  <button className="button" onClick={handleCreateRoomUser}>Create Room</button>
-                  <button className="button" onClick={() => setIsModalOpen(false)}> Cancel</button>
+                  <button className="button" onClick={handleJoinWithCode}> Create Room </button>
+                  <button className="button" onClick={() => setIsModalOpen(false)}> Cancel </button>
                 </div>
               </div>
 	    </div>
+          }
+          {isCodeModalOpen &&
+            <div className="createRoomModal">
+              <div className="modalContent">
+                <input
+                  className="roomNameInput"
+                  placeholder="Room Code"
+                  value={roomCode}
+                  onChange={(e) => setRoomCode(e.target.value)}
+                />
+	        <input
+                  className="usernameInput"
+                  placeholder="Username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                />
+                <div className="create-actions">
+                  <button className="button" onClick={handleCreateRoomUser}> Create Room </button>
+                  <button className="button" onClick={() => setIsCodeModalOpen(false)}> Cancel </button>
+                </div>
+              </div>
+            </div>
           }
   	  <div className="homeImage"></div>
           <div className="buttonContainer">
@@ -94,6 +129,12 @@ export default function Home(){
             >
 	      Join a Random Room
             </button>
+	    <button
+	      onClick={() => setIsCodeModalOpen(true)}
+	      className="homePageButton"
+	    >
+	      Join Room with Code
+	    </button>
             <button
               onClick={() => navigateToPage('/rooms')}
               className="homePageButton"
