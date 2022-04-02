@@ -93,7 +93,7 @@ export default function Home(){
                   onChange={(e) => setUsername(e.target.value)}
                 />
                 <div className="create-actions">
-                  <button className="button" onClick={handleJoinWithCode}> Create Room </button>
+                  <button className="button" onClick={handleCreateRoomUser}> Create Room </button>
                   <button className="button" onClick={() => setIsModalOpen(false)}> Cancel </button>
                 </div>
               </div>
@@ -115,7 +115,7 @@ export default function Home(){
                   onChange={(e) => setUsername(e.target.value)}
                 />
                 <div className="create-actions">
-                  <button className="button" onClick={handleCreateRoomUser}> Create Room </button>
+                  <button className="button" onClick={handleJoinWithCode}> Create Room </button>
                   <button className="button" onClick={() => setIsCodeModalOpen(false)}> Cancel </button>
                 </div>
               </div>
