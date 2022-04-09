@@ -49,6 +49,8 @@ export default function Home(){
     axios.post(`https://crow249.herokuapp.com/rooms/join/${roomCode}/${username}`)
       .then((response) => {
         localStorage.setItem('roomCode', roomCode);
+        localStorage.setItem('username', username);
+        localStorage.setItem('private room', true);
         navigateToPage('/chatroom');
       })
       .catch(error => {

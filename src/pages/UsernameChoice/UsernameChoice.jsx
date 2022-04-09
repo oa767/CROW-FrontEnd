@@ -7,14 +7,17 @@ import './usernameChoice.css';
 import '../Home/home.css';
 
 export default function UsernameChoice() {
+  const usernames = ["Crow", "Owl", "Raven", "Eagle", "Sparrow", "Penguin", "Flamingo", "Crane", "Hummingbird", "Dove"];
   const history = useHistory();
-	
+
+  var randomUsername = usernames[Math.floor(Math.random()*usernames.length)];
+
   function navigateToPage(path) {
     history.push(path);
   }
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [username, setUsername] = useState('');
+  const [username, setUsername] = useState(randomUsername);
 
   const createUser = () => {
     axios.post(`https://crow249.herokuapp.com/users/create/${username}`)
@@ -55,7 +58,10 @@ export default function UsernameChoice() {
             </div>
           </div>
         }
-        <button className="homePageButton choice">
+        <button
+	  onClick={createUser}	  
+	  className="homePageButton choice"
+	>
           Choose for me
         </button>
         <button

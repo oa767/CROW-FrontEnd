@@ -6,6 +6,7 @@ import './usernames.css';
 export default function Username() {
   const leftUsernames = ["Crow", "Owl", "Raven", "Eagle", "Sparrow"];
   const rightUsernames = ["Penguin", "Flamingo", "Crane", "Hummingbird", "Dove"];
+
   const history = useHistory();
 
   return (

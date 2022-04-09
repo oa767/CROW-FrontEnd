@@ -39,8 +39,8 @@ export default function Chatroom() {
         .catch(error => {
           console.log(error);
         })
-   }
-  }
+     }
+  }  
 
   useEffect(() => {
     joinRoomGetUsers();
