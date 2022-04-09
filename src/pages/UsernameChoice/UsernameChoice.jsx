@@ -19,13 +19,20 @@ export default function UsernameChoice() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [username, setUsername] = useState(randomUsername);
 
-  const createUser = () => {
+  const createUserJoinRoom = () => {
     axios.post(`https://crow249.herokuapp.com/users/create/${username}`)
       .then(() => {
         setIsModalOpen(false);
  	localStorage.setItem('username', username);
         localStorage.setItem('private room', false);
 	navigateToPage('/chatroom');
+      })
+      .catch(error => {
+        console.log(error);
+      })
+    axios.post(`https://crow249.herokuapp.com/rooms/join/${username}`)
+      .then((response) => {
+        console.log(response.data);
       })
       .catch(error => {
         console.log(error);
@@ -53,13 +60,13 @@ export default function UsernameChoice() {
               onChange={(e) => setUsername(e.target.value)}
 	    />
             <div className="create-actions">
-              <button className="button" onClick={createUser}> Go To Room </button>
+              <button className="button" onClick={createUserJoinRoom}> Go To Room </button>
               <button className="button" onClick={() => setIsModalOpen(false)}> Cancel </button>
             </div>
           </div>
         }
         <button
-	  onClick={createUser}	  
+	  onClick={createUserJoinRoom}	  
 	  className="homePageButton choice"
 	>
           Choose for me

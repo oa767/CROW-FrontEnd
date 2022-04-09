@@ -1,65 +1,57 @@
 import React, {useState, useEffect} from 'react';
 import axios from 'axios';
-import {useHistory} from 'react-router-dom';
+import {useHistory, useParams} from 'react-router-dom';
 
 import './chatroom.css';
 
 export default function Chatroom() { 
-  const roomName = localStorage.getItem('roomName');
-  const username = localStorage.getItem('username');
-  const roomCode = localStorage.getItem('roomCode');
-  const privateRoom = JSON.parse(localStorage.getItem('private room')); 
-
-  const [users, setUsers] = useState(undefined);
-
   const history = useHistory();
+  const params = useParams();
+  const roomID = params.roomID;
 
-  const joinRoomGetUsers = async() => {
-   if (privateRoom) {
-     await axios.post(`https://crow249.herokuapp.com/rooms/join/${roomCode}/${username}`)
-       .then((response) => {
-         console.log(response.data);
-        })
-        .catch(error => {
-          console.log(error);
-        })
-     axios.get(`https://crow249.herokuapp.com/users/list/${roomName}`)
-       .then((response) => {
-         console.log(response.data);
-         setUsers(response.data);
-       })
-       .catch(error => {
-         console.log(error);
-       })
-   } else {
-     await axios.post(`https://crow249.herokuapp.com/rooms/join/${username}`)
-       .then((response) => {
-         console.log(response.data);
-        })
-        .catch(error => {
-          console.log(error);
-        })
-     }
-  }  
+  const [data, setData] = useState(undefined);
+  const [rooms, setRooms] = useState(undefined);
+  const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    joinRoomGetUsers();
-  }, []);
+  const getRoomData = async() => {
+    await axios.get('https://crow249.herokuapp.com/rooms/list')
+      .then((response) => {
+	setRooms(response.data);
+	console.log(response.data);
+      })
+      .catch(error => {
+        console.log(error);
+      })
+  }
+
+  useEffect(async() => {
+    const getRooms = await getRoomData();
+    for (var i = 0; i < rooms.length; ++i) {
+      if (rooms[i]._id.$oid == roomID) {
+        setData(rooms[i]);
+        console.log(rooms[i]);
+        setIsLoading(false);
+        break;
+      }
+    }
+  }, [])
 
   return (
+    <>
+    {!isLoading && (
     <div className="content chatroom">
       <div className="sideBarContainer">
         <div className="topBar">
           <button
 	    className="topBarTitle chatroom"
-	    onClick={() => history.push('./')}
+	    onClick={() => history.push('/')}
           >            
 	    Crow
           </button>
         </div>
         <div className="sidebar">
           <div className="sidebarContent">
-            {users ? users.map((user, index) => (
+            {data.list_users ? data.list_users.map((user, index) => (
               <div
                 key={`${user}-${index}`}
               >
@@ -73,8 +65,8 @@ export default function Chatroom() {
       </div>
       <div className="chatContainer">
         <div className="topBar chat">
-          <div className="roomName"> {roomName} </div>
-          {privateRoom && <h4 style={{color: "white", marginLeft: "225px"}}> {roomCode} </h4>}
+          <div className="roomName"> {data.room_name} </div>
+          <h4 style={{color: "white", marginLeft: "225px"}}> {data._id.$oid} </h4>
         </div>
         <div className="chatWindow"></div>
         <div className="chatbar">
@@ -85,5 +77,7 @@ export default function Chatroom() {
         </div>
       </div>
     </div>
+    )}
+    </>
   )
 }

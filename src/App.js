@@ -36,7 +36,7 @@ function App() {
 	    <Route exact={true} path={'/usernameChoice'}>
 	      <UsernameChoice />
 	    </Route>
-            <Route exact={true} path={'/chatroom'}>
+            <Route path={'/chatroom/:roomID'}>
               <Chatroom />
             </Route>
           </Switch>

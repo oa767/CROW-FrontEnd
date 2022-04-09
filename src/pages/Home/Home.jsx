@@ -45,6 +45,17 @@ export default function Home(){
       })
   }
 
+  const joinPrivateRoom = async() => {
+    const createRoomUser = await handleCreateRoomUser();
+    axios.post(`https://crow249.herokuapp.com/rooms/join/${roomCode}/${username}`)
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch(error => {
+        console.log(error);
+      })
+  }
+
   const handleJoinWithCode = () => {
     axios.post(`https://crow249.herokuapp.com/rooms/join/${roomCode}/${username}`)
       .then((response) => {
@@ -95,7 +106,7 @@ export default function Home(){
                   onChange={(e) => setUsername(e.target.value)}
                 />
                 <div className="create-actions">
-                  <button className="button" onClick={handleCreateRoomUser}> Create Room </button>
+                  <button className="button" onClick={joinPrivateRoom}> Create Room </button>
                   <button className="button" onClick={() => setIsModalOpen(false)}> Cancel </button>
                 </div>
               </div>
