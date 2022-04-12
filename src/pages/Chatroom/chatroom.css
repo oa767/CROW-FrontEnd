@@ -27,6 +27,8 @@
   margin: 16px;
   margin-top: 25px;
   height: 100%;
+  min-height: 125px;
+  overflow: scroll;
 }
 
 .sidebarContent {
@@ -36,7 +38,7 @@
   align-items: center;
   gap: 15px;
   padding-top: 32px;
-  overflow: scroll;
+  padding-bottom: 32px;
 }
 
 .chatContainer {
@@ -54,12 +56,13 @@
 .roomName {
   font-size: 20px;
   color: white;
-  margin-left: 39.5%;
+  width: 100%;
+  text-align: center;
 }
 
 .chatbar {
   padding: 7px;
-  height: 75px;
+  height: 14%;
   border-radius: 25px;
   background-color: #246964;
   margin-right: 16px;
@@ -76,6 +79,7 @@
 
 .chatWindow {
   height: 100%;
+  min-height: 50px;
   border-radius: 25px;
   background-color: white;
   margin-top: 25px;
