@@ -64,7 +64,7 @@ export default function Home(){
         console.log(error);
       })
   }
-  
+
   return (
 	  /* The home page has 4 key functions as the introduction to the website
 		1. It shows users  a list of chat rooms that they can join, center of the screen	

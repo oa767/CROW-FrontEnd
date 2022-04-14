@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {useHistory} from 'react-router-dom';
 import axios from 'axios';
 
@@ -18,26 +18,43 @@ export default function UsernameChoice() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [username, setUsername] = useState(randomUsername);
+  const [randomRoom, setRandomRoom] = useState("");
+
+  const path = '/chatroom/';
 
   const createUserJoinRoom = () => {
     axios.post(`https://crow249.herokuapp.com/users/create/${username}`)
-      .then(() => {
+      .then((response) => {
+	console.log(response.data);
         setIsModalOpen(false);
  	localStorage.setItem('username', username);
-        localStorage.setItem('private room', false);
-	navigateToPage('/chatroom');
+        localStorage.setItem('privateRoom', false);
+        localStorage.setItem('newUser', true);
       })
       .catch(error => {
         console.log(error);
       })
-    axios.post(`https://crow249.herokuapp.com/rooms/join/${username}`)
+    axios.post(`https://crow249.herokuapp.com/rooms/join/${randomRoom}/${username}`)
       .then((response) => {
         console.log(response.data);
+	console.log(path.concat(randomRoom))
+        navigateToPage(path.concat(randomRoom));
       })
       .catch(error => {
         console.log(error);
       })
   }
+
+  const getRooms = () => {
+    return axios.get('https://crow249.herokuapp.com/rooms/list');
+  }
+
+  useEffect(async() => {
+    const rooms = await getRooms()
+			.catch((error) => console.log(error));
+
+    setRandomRoom(rooms.data[Math.floor(Math.random()*rooms.data.length)]._id.$oid);
+  }, [])
 
   return (
     <>
@@ -66,13 +83,16 @@ export default function UsernameChoice() {
           </div>
         }
         <button
-	  onClick={createUserJoinRoom}	  
+	  onClick={createUserJoinRoom}
 	  className="homePageButton choice"
 	>
           Choose for me
         </button>
         <button
-          onClick={() => navigateToPage('/usernameChoice/usernames')}
+          onClick={() => {
+	    localStorage.setItem("roomCode", randomRoom);
+	    navigateToPage('/usernameChoice/usernames');
+	  }}
 	  className="homePageButton choice"
         >
 	  Pick a Default Username
