@@ -90,7 +90,7 @@ export default function UsernameChoice() {
         </button>
         <button
           onClick={() => {
-	    localStorage.setItem("roomCode", randomRoom);
+	    sessionStorage.setItem("roomCode", randomRoom);
 	    navigateToPage('/usernameChoice/usernames');
 	  }}
 	  className="homePageButton choice"

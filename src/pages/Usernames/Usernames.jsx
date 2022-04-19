@@ -16,7 +16,7 @@ export default function Username() {
   const path = '/chatroom/';
 
   const createUserJoinRoom = () => {
-    axios.post(`https://crow249.herokuapp.com/users/create/${localStorage.getItem("username")}`)
+    axios.post(`https://crow249.herokuapp.com/users/create/${sessionStorage.getItem("username")}`)
       .then((response) => {
         console.log(response.data);
         sessionStorage.setItem('privateRoom', false);
@@ -25,7 +25,7 @@ export default function Username() {
       .catch(error => {
         console.log(error);
       })
-    axios.post(`https://crow249.herokuapp.com/rooms/join/${roomCode}/${localStorage.getItem("username")}`)
+    axios.post(`https://crow249.herokuapp.com/rooms/join/${roomCode}/${sessionStorage.getItem("username")}`)
       .then((response) => {
         console.log(response.data);
         console.log(path.concat(roomCode));
