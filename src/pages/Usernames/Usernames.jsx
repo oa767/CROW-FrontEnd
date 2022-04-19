@@ -10,7 +10,7 @@ export default function Username() {
 
   const history = useHistory();
 
-  const roomCode = localStorage.getItem("roomCode");
+  const roomCode = sessionStorage.getItem("roomCode");
   const [chosenName, setChosenName] = useState(undefined);
 
   const path = '/chatroom/';
@@ -19,8 +19,8 @@ export default function Username() {
     axios.post(`https://crow249.herokuapp.com/users/create/${localStorage.getItem("username")}`)
       .then((response) => {
         console.log(response.data);
-        localStorage.setItem('privateRoom', false);
-        localStorage.setItem('newUser', true);
+        sessionStorage.setItem('privateRoom', false);
+        sessionStorage.setItem('newUser', true);
       })
       .catch(error => {
         console.log(error);
@@ -29,7 +29,7 @@ export default function Username() {
       .then((response) => {
         console.log(response.data);
         console.log(path.concat(roomCode));
-        localStorage.removeItem('roomCode');
+        sessionStorage.removeItem('roomCode');
         history.push(path.concat(roomCode));
       })
       .catch(error => {
@@ -64,7 +64,7 @@ export default function Username() {
 	      key={`${username}`}
 	      onClick={() => {
 		console.log(username);
- 		localStorage.setItem("username", username);
+ 		sessionStorage.setItem("username", username);
 		createUserJoinRoom();		
 	      }}
 	    >
@@ -79,7 +79,7 @@ export default function Username() {
               key={`${username}`}
               onClick={() => {
 		console.log(username);
-		localStorage.setItem("username", username);
+		sessionStorage.setItem("username", username);
                 createUserJoinRoom();
               }}
             >

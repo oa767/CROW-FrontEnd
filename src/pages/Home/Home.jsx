@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import {useHistory} from 'react-router-dom';
 import axios from 'axios';
+import homeImage from './homeLogo.png';
 
 import './home.css';
 
@@ -42,9 +43,9 @@ export default function Home(){
     const code = await handleCreateRoomUser()
 			.catch((error) => console.log(error));
     console.log(code.data);
-    localStorage.setItem('privateRoom', true);
-    localStorage.setItem('newUser', true);
-    localStorage.setItem('username', username);
+    sessionStorage.setItem('privateRoom', true);
+    sessionStorage.setItem('newUser', true);
+    sessionStorage.setItem('username', username);
     console.log(path.concat(code.data));
     navigateToPage(path.concat(code.data));
   }
@@ -54,9 +55,9 @@ export default function Home(){
       .then((response) => {
         console.log(response.data);
         setIsCodeModalOpen(false);
-	localStorage.setItem('username', username);
-        localStorage.setItem('privateRoom', true);
-        localStorage.setItem('newUser', true);
+	sessionStorage.setItem('username', username);
+        sessionStorage.setItem('privateRoom', true);
+        sessionStorage.setItem('newUser', true);
         console.log(path.concat(roomCode))
         navigateToPage(path.concat(roomCode));
       })
@@ -78,6 +79,7 @@ export default function Home(){
           <button 
 	    onClick={() => setIsModalOpen(true)}
 	    className="privateRoomButton"
+	    style={{width: "21%"}}
 	  >
             Create a Private Room
           </button>
@@ -130,7 +132,9 @@ export default function Home(){
               </div>
             </div>
           }
-  	  <div className="homeImage"></div>
+	  <div className="imageContainer">
+	    <img src={homeImage} />
+  	  </div>
           <div className="buttonContainer">
             <button
 	      onClick={() => navigateToPage('/usernameChoice')}

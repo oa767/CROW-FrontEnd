@@ -71,10 +71,9 @@
   padding: 5px;
 }
 
-.homeImage {
+.imageContainer {
   width: 750px;
   height: 497px;
-  background: url('./homeLogo.png');
 }
 
 @font-face {
@@ -97,5 +96,6 @@
   margin-bottom: -16px;
   padding-top: 16px;
   padding-bottom: 16px;
-  margin-left: 33%;
+  width: 84%;
+  margin-left: 32.7%;
 }

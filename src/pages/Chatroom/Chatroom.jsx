@@ -9,13 +9,13 @@ export default function Chatroom() {
   const params = useParams();
   const roomID = params.roomID;
 
-  const username = localStorage.getItem('username');
+  const username = sessionStorage.getItem('username');
 
   const [data, setData] = useState(undefined);
 
   const [isLoading, setIsLoading] = useState(true);
-  const [isPrivate, setIsPrivate] = useState(JSON.parse(localStorage.getItem('privateRoom')));
-  const [isNewUser, setIsNewUser] = useState(JSON.parse(localStorage.getItem('newUser')));
+  const [isPrivate, setIsPrivate] = useState(JSON.parse(sessionStorage.getItem('privateRoom')));
+  const [isNewUser, setIsNewUser] = useState(JSON.parse(sessionStorage.getItem('newUser')));
   const [isNewRoom, setIsNewRoom] = useState(true);
 
   const joinRoom = async() => {
@@ -24,7 +24,7 @@ export default function Chatroom() {
         .then((response) => {
           console.log(response.data);
 	  setIsNewUser(false);
-	  localStorage.setItem('newUser', false);
+	  sessionStorage.setItem('newUser', false);
 	  setIsNewRoom(false);
         })
         .catch(error => {
@@ -35,7 +35,7 @@ export default function Chatroom() {
         .then((response) => {
           console.log(response.data);
 	  setIsNewUser(false);
-          localStorage.setItem('newUser', false);
+          sessionStorage.setItem('newUser', false);
         })
         .catch(error => {
           console.log(error);
@@ -49,7 +49,7 @@ export default function Chatroom() {
 	for (var i = 0; i < response.data.length; ++i) {
           if (response.data[i]._id.$oid == roomID) {
             setData(response.data[i]);
-            console.log(response.data[i]);
+            /*console.log(response.data[i]);*/
             setIsLoading(false);
           }
         }
@@ -59,55 +59,57 @@ export default function Chatroom() {
       })
   }
 
-  useEffect(async() => {
-    await joinRoom()
-      .catch((error) => {
-	console.log(error);
-      })
-    await getRoomData()
-      .catch((error) => {
-        console.log(error);
-      })
+  useEffect(() => {
+    joinRoom();
+    getRoomData();
+
+    const interval = setInterval(() => {
+      getRoomData();
+    }, 1000);
+    return () => clearInterval(interval);
   }, []);
 
   return (
     <>
       {!isLoading &&
         <div className="content chatroom">
-          <div className="sideBarContainer">
+          <div className="topBarContainer">
             <div className="topBar">
               <button
-	        className="topBarTitle chatroom"
-	        onClick={() => history.push('/')}
-              >            
-	        Crow
+                className="topBarTitle chatroom"
+                onClick={() => history.push('/')}
+              >
+                Crow
               </button>
-            </div>
-            <div className="sidebar">
-              <div className="sidebarContent">
-                {data.list_users ? data.list_users.map((user, index) => (
-                  <div
-                    key={`${user}-${index}`}
-                  >
-                    <h3> {user} </h3>
-                  </div>
-                )) : (
-                  <h3></h3>
-                )}
-              </div>
+	      <div className="roomName"> {data.room_name} </div>
+	      {isPrivate && <div className="roomCode"> {data._id.$oid} </div>}
+	      {!isPrivate && <div className="roomCode" style={{width: "42.6vmin"}}></div>}
             </div>
           </div>
-          <div className="chatContainer">
-            <div className="topBar chat">
-              <div className="roomName"> {data.room_name} </div>
-              {isPrivate && <h4 style={{color: "white", width: "250px"}}> {data._id.$oid} </h4>}
+	  <div className="content chatBody">
+            <div className="sideBarContainer">
+              <div className="sidebar">
+                <div className="sidebarContent">
+                  {data.list_users ? data.list_users.map((user, index) => (
+                    <div
+                      key={`${user}-${index}`}
+                    >
+                      <p> {user} </p>
+                    </div>
+                  )) : (
+                    <p></p>
+                  )}
+                </div>
+              </div>
             </div>
-            <div className="chatWindow"></div>
-            <div className="chatbar">
-              <input
-	        className="chatInput"
-                placeholder="Type a message"
-              />
+            <div className="chatContainer">
+              <div className="chatWindow"></div>
+              <div className="chatbar">
+                <input
+	          className="chatInput"
+                  placeholder="Type a message"
+                />
+              </div>
             </div>
           </div>
         </div>

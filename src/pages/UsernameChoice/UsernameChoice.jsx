@@ -27,9 +27,9 @@ export default function UsernameChoice() {
       .then((response) => {
 	console.log(response.data);
         setIsModalOpen(false);
- 	localStorage.setItem('username', username);
-        localStorage.setItem('privateRoom', false);
-        localStorage.setItem('newUser', true);
+ 	sessionStorage.setItem('username', username);
+        sessionStorage.setItem('privateRoom', false);
+        sessionStorage.setItem('newUser', true);
       })
       .catch(error => {
         console.log(error);
