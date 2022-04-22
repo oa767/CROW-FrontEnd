@@ -14,9 +14,13 @@ export default function Home(){
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCodeModalOpen, setIsCodeModalOpen] = useState(false);
+  const [isInterestModalOpen, setIsInterestModalOpen] = useState(false);
   const [roomName, setRoomName] = useState('');
   const [roomCode, setRoomCode] = useState('');
   const [username, setUsername] = useState('');
+
+  const [interest, setInterest] = useState('');
+  const [interestsArray, setInterestsArray] = useState([]);
 
   const path = '/chatroom/';
 
@@ -64,6 +68,32 @@ export default function Home(){
       .catch(error => {
         console.log(error);
       })
+  }
+
+  const callJoinWithInterests = () => {
+    console.log(interestsArray.join(","));
+    axios.post(`https://crow249.herokuapp.com/rooms/join/interests/${username}?interests=${interestsArray.join(",")}`)
+      .then((response) => {
+	console.log(Object.values(response.data).join(''));
+	setIsInterestModalOpen(false);
+	sessionStorage.setItem('username', username);
+        sessionStorage.setItem('privateRoom', false);
+        sessionStorage.setItem('newUser', true);
+ 	sessionStorage.setItem('roomName', Object.values(response.data)[0]);
+      })        
+      .catch(error => {
+        console.log(error);
+      })
+  }
+
+  const handleJoinWithInterests = async() => {
+    await callJoinWithInterests();
+    const code =  await axios.get(`https://crow249.herokuapp.com/rooms/${sessionStorage.getItem('roomName')}/id`)
+			.catch((error) => console.log(error));
+    console.log(code.data);
+    sessionStorage.removeItem('roomName');
+    console.log(path.concat(code.data));
+    navigateToPage(path.concat(code.data));
   }
 
   return (
@@ -132,6 +162,59 @@ export default function Home(){
               </div>
             </div>
           }
+	  {isInterestModalOpen &&
+	    <div className="createRoomModal">
+	      <div className="modalContent">
+	        <input
+		  className="roomNameInput"
+		  placeholder="New Interest"
+		  value={interest}
+		  onChange={(e) => setInterest(e.target.value)}
+ 		  id="newInterests"
+		/>
+		<input
+                  className="usernameInput"
+                  placeholder="Username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                />
+		<div className="create-actions">
+	   	  <button
+		    className="button"
+		    onClick={() => {
+		      setInterestsArray(() => [...interestsArray, interest]);
+		      var value = document.getElementById('newInterests').value;
+                      var list = document.getElementById('interestsList');
+    		      var newInterest = document.createElement('p');
+ 		      newInterest.appendChild(document.createTextNode(value));
+		      list.appendChild(newInterest);
+		      setInterest('');
+   		    }}
+    	          >
+		    Add Interest
+		  </button>
+	          <button
+		    className="button"
+		    onClick={handleJoinWithInterests}
+ 		  >
+		    Join Room
+   		  </button>
+                  <button 
+		    className="button" 
+		    onClick={() => {
+		      setInterest('');
+		      setUsername('');
+		      setInterestsArray([]);
+	              setIsInterestModalOpen(false);
+		    }}
+		  > 
+		    Cancel 
+		  </button>
+                </div>
+		<div className="interestsContainer" id="interestsList"></div>
+              </div>
+            </div>
+          }
 	  <div className="imageContainer">
 	    <img src={homeImage} />
   	  </div>
@@ -147,6 +230,12 @@ export default function Home(){
 	      className="homePageButton"
 	    >
 	      Join Room with Code
+	    </button>
+	    <button
+	      onClick={() => setIsInterestModalOpen(true)}
+	      className="homePageButton"
+	    >
+	      Join Room with Interests
 	    </button>
             <button
               onClick={() => navigateToPage('/rooms')}
