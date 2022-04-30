@@ -13,9 +13,12 @@ export default function Rooms() {
   const [refresh, setRefresh] = useState(undefined);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [isModifyOpen, setIsModifyOpen] = useState(false);
+  const [isUpdateOpen, setIsUpdateOpen] = useState(false);  
+
   const [newRoomName, setNewRoomName] = useState('');
   const [roomToDelete, setRoomToDelete] = useState('');
+  const [roomToUpdate, setRoomToUpdate] = useState('');
 
   const history = useHistory();
 
@@ -45,10 +48,22 @@ export default function Rooms() {
       })
   }
   
-  const handleDeleteRoom= () => {
+  const handleDeleteRoom = () => {
     axios.post(`https://crow249.herokuapp.com/rooms/delete/${roomToDelete}`)
       .then(() => {
-        setIsDeleteOpen(false);
+        setIsModifyOpen(false);
+        setRefresh(refresh + 1);
+      })
+      .catch(error => {
+        setError(error);
+        console.log(error);
+      })
+  }
+
+  const handleChangeRoom = () => {
+    axios.put(`https://crow249.herokuapp.com/rooms/update/${roomToUpdate}/${newRoomName}`)
+      .then(() => {
+        setIsUpdateOpen(false);
         setRefresh(refresh + 1);
       })
       .catch(error => {
@@ -90,21 +105,45 @@ export default function Rooms() {
               </div>
             </div>
           }
-          {isDeleteOpen &&
+          {isModifyOpen &&
             <div className="create-modal">
               <div className="create-actions">
                 <button className="button" onClick={handleDeleteRoom}> Delete Room </button>
-                <button className="button" onClick={() => setIsDeleteOpen(false)}> Cancel </button>
+		<button 
+		  className="button" 
+		  onClick={() => {
+		    setIsModifyOpen(false);
+		    setIsUpdateOpen(true);
+		  }}
+		> 
+		  Change Room Name 
+		</button>
+                <button className="button" onClick={() => setIsModifyOpen(false)}> Cancel </button>
               </div>
             </div>
           }
+	  {isUpdateOpen &&
+	    <div className="create-modal">
+		<input
+                  className="room-input"
+                  placeholder="New Room Name"
+                  value={newRoomName}
+                  onChange={(e) => setNewRoomName(e.target.value)}
+                />
+	      <div className="create-actions">
+	        <button className="button" onClick={handleChangeRoom}> Update Room </button>
+		<button className="button" onClick={() => setIsUpdateOpen(false)}> Cancel </button>
+	      </div>
+	    </div>
+	  }
           {rooms ? rooms.map((room, index) => (
 	    <div
 	      className="room-item"
 	      key={`${room.room_name}-${index}`}
 	      onClick={() => {
                 setRoomToDelete(room.room_name);
-                setIsDeleteOpen(true);
+		setRoomToUpdate(room.room_name);
+                setIsModifyOpen(true);
               }}          
 	    > 
               <p> {room.room_name} </p>
