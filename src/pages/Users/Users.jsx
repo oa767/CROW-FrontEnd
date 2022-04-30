@@ -11,9 +11,12 @@ export default function Users() {
   const [refresh, setRefresh] = useState(0);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [isModifyOpen, setIsModifyOpen] = useState(false);
+  const [isUpdateOpen, setIsUpdateOpen] = useState(false);
+
   const [newUserName, setNewUserName] = useState('');
   const [userToDelete, setUserToDelete] = useState('');
+  const [userToUpdate, setUserToUpdate] = useState('');
 
   const history = useHistory();
 
@@ -45,7 +48,7 @@ export default function Users() {
   const handleDeleteUser = () => {
     axios.post(`https://crow249.herokuapp.com/users/delete/${userToDelete}`)
       .then(() => {
-        setIsDeleteOpen(false);
+        setIsModifyOpen(false);
         setRefresh(refresh + 1);
       })
       .catch(error => {
@@ -54,6 +57,18 @@ export default function Users() {
       })
   }
   
+  const handleChangeUser = () => {
+    axios.put(`https://crow249.herokuapp.com/users/update/${userToUpdate}/${newUserName}`)
+      .then(() => {
+         setIsUpdateOpen(false);
+         setRefresh(refresh + 1);
+       })
+       .catch(error => {
+        setError(error);
+        console.log(error);
+      })
+  }
+
   return (
     <>
       <div className="rooms-header">
@@ -87,22 +102,45 @@ export default function Users() {
             </div>
           </div>
         }
-        {isDeleteOpen &&
+        {isModifyOpen &&
           <div className="create-modal">
             <div className="create-actions">
               <button className="button" onClick={handleDeleteUser}> Delete User</button>
-              <button className="button" onClick={() => setIsDeleteOpen(false)}> Cancel </button>
+	      <button 
+ 		  className="button" 
+ 		  onClick={() => {
+ 		    setIsModifyOpen(false);
+ 		    setIsUpdateOpen(true);
+ 		  }}
+ 		> 
+ 		  Change Username 
+ 		</button>
+              <button className="button" onClick={() => setIsModifyOpen(false)}> Cancel </button>
             </div>
           </div>
         }
-
+	{isUpdateOpen &&
+ 	  <div className="create-modal">
+ 	    <input
+              className="room-input"
+              placeholder="New Username"
+              value={newUserName}
+              onChange={(e) => setNewUserName(e.target.value)}
+            />
+ 	    <div className="create-actions">
+ 	      <button className="button" onClick={handleChangeUser}> Update User </button>
+ 	      <button className="button" onClick={() => setIsUpdateOpen(false)}> Cancel </button>
+ 	    </div>
+ 	  </div>
+ 	}
         {users ? users.map((user, index) => (
           <div 
             className="user-item"
             key={`${user.user_name}-${index}`}
             onClick={() => {
               setUserToDelete(user.user_name);
-    	      setIsDeleteOpen(true);
+	      setUserToUpdate(user.user_name);
+    	      setIsModifyOpen(true);
             }}
 	  >
             <p>{user.user_name}</p>
