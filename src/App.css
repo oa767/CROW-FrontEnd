@@ -1,0 +1,77 @@
+.root {
+  width: 100vw;
+}
+
+.quote {
+  font-style: italic;
+}
+
+.quote-author {
+  opacity: .8;
+}
+
+.wrapper {
+  position: relative;
+  width: 100vw;
+}
+
+.content {
+  width: 100vw;
+}
+
+.page-button {
+  min-width: 300px;
+  max-width: 400px;
+  border: 1px solid #94A3B8;
+  background-color: #E2E8F0;
+  padding-right: 25px;
+  padding-left: 25px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.button {
+  padding-right: 15px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left: 15px;
+  border: 1px solid #94A3B8;
+  background-color: #E2E8F0;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.page-button:hover {
+  background-color: #CBD5E1;
+}
+
+.topBar {
+  padding-top: 2.21vh;
+  padding-bottom: 2.21vh;
+  padding-left: 2.363vw;
+  padding-right: 2.363vw;
+  height: 100%;
+  background-color: #173245;
+  flex-direction: row;
+  display: flex;
+}
+
+.privateRoomButton {
+  padding-top: 16px;
+  padding-bottom: 16px;
+  margin-top: -16px;
+  margin-bottom: -16px;
+  background: none;
+  border: none;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.privateRoomButton:hover {
+  color: #c5ccd1;
+}
+

@@ -1,0 +1,113 @@
+.content.chatroom {
+  display: flex;
+  flex-direction: column;
+}
+
+.topBarContainer {
+  width: 100vw;
+  height: 10.912vh;
+}
+
+.topBarTitle.chatroom {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  width: 14.8vmin;
+  height: 6.492vh;
+  font-size: 4.3vmin;
+  margin-right: 19vmin;
+}
+
+.topBarTitle.chatroom:hover {
+  color: #c5ccd1;
+}
+
+.roomName {
+  font-size: 3vmin;
+  color: white;
+  height: 3.8vmin;
+  width: 100%;
+  text-align: center;
+  margin-top: 1.346vmin;
+}
+
+.roomCode {
+  color: white;
+  height: 2.2vmin;
+  font-size: 2.2vmin;
+  margin-top: 2vmin;
+}
+
+.content.chatBody {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  padding-bottom: 2.21vh;
+  padding-left: 1.182vw;
+  padding-right: 1.182vw;
+  padding-top: 3.453vh;
+  height: 89.088vh;
+  gap: 1.182vw;
+}
+
+.sideBarContainer {
+  box-sizing: border-box;
+  width: 20.827vw;
+}  
+
+.sidebar {
+  width: 100%;
+  border-radius: 25px;
+  background-color: white;
+  height: 100%;
+  overflow: scroll;
+  padding-bottom: 4.42vh;
+  padding-top: 4.42vh;
+  padding-left: 2.363vw;
+  padding-right: 2.363vw;
+}
+
+.sidebarContent {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 1.45vmax;
+  gap: 2.072vmin;
+}
+
+.chatWindow {
+  height: 71.215vh;
+  border-radius: 25px;
+  background-color: white;
+  margin-bottom: 2.21vh;
+}
+
+.chatContainer {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.chatbar {
+  padding-top: 0.967vh;
+  padding-bottom: 0.967vh;
+  padding-left: 0.517vw;
+  padding-right: 0.517vw;
+  min-height: 10vh;
+  border-radius: 25px;
+  background-color: #246964;
+}
+
+.chatInput {
+  width: 100%;
+  height: 100%;
+  border-radius: 25px;
+  font-size: 100%;
+  padding-bottom: 0.691vh;
+  padding-top: 0.691vh;
+  padding-left: 0.369vw;
+  padding-right: 0.369vw;
+}
