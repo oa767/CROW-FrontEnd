@@ -44,11 +44,11 @@ export default function Chatroom() {
 
   useEffect(() => {
     getRoomData();
-  }, [numUsers]);
+  }, []);
 
   useEffect(() => {
     socket.on("new user", () => {
-      setAlert(message);
+      setAlert("New user joined");
       setAlertBoxOpen(true);
       setNumUsers(numUsers + 1);
     })
