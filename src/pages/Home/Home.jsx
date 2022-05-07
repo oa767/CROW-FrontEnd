@@ -166,7 +166,7 @@ export default function Home(){
     const timeout = setTimeout(() => {
       setAlertBoxOpen(false);
       setAlert(undefined);
-    }, 100 * alert.length);
+    }, 3000);
     return () => clearTimeout(timeout);
   }, [alert])
 
