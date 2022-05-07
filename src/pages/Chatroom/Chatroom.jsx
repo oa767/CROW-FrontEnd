@@ -1,8 +1,7 @@
 import React, {useState, useEffect, useContext} from 'react';
 import axios from 'axios';
 import {useHistory, useParams} from 'react-router-dom';
-import {io} from 'socket.io-client';
-import {setGlobalState, useGlobalState} from '../../state';
+import {useGlobalState} from '../../state';
 import {SocketContext} from '../../context/socket';
 
 import './chatroom.css';
@@ -21,12 +20,15 @@ export default function Chatroom() {
   const [data, setData] = useState(undefined);
   const [isLoading, setIsLoading] = useState(true);
 
+  const [alert, setAlert] = useState(undefined);
+  const [alertBoxOpen, setAlertBoxOpen] = useState(false);
+
   const getRoomData = async() => {
     await axios.get('https://crow249.herokuapp.com/rooms/list')
       .then((response) => {
 	if (response.data) {
 	  for (var i = 0; i < response.data.length; ++i) {
-            if (response.data[i]._id.$oid == roomID) {
+            if (response.data[i]._id.$oid === roomID) {
               setData(response.data[i]);
               console.log(response.data[i]);
               setIsLoading(false);
@@ -44,10 +46,41 @@ export default function Chatroom() {
       getRoomData();
     }, 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [getRoomData]);
+
+  useEffect(() => {
+    socket.on("new user", () => {
+      setAlert("New User Joined");
+      setAlertBoxOpen(true);
+    })
+  });
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setAlertBoxOpen(false);
+      setAlert(undefined);
+    }, 100 * alert.length);
+    return () => clearTimeout(timeout);
+  }, [alert]);
 
   return (
     <>
+      {alertBoxOpen &&
+        <div className="alertContainer">
+          <div className="alert">
+            <span
+              className="closebtn"
+              onClick={() => {
+                setAlert(undefined);
+                setAlertBoxOpen(false);
+              }}
+            >
+              &times;
+            </span>
+            <strong> Alert! </strong> {alert.toString()}
+          </div>
+        </div>
+      }
       {!isLoading &&
         <div className="content chatroom">
           <div className="topBarContainer">

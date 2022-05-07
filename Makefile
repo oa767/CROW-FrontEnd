@@ -3,3 +3,6 @@ node_modules:
 
 run: node_modules
 		npm run start
+
+server:
+		cd Server && npm run pushToHeroku

@@ -42,6 +42,7 @@ io.on('connection', (socket) => {
       .then(() => {
 	console.log(`${username} added to ${roomCode}`);
         socket.emit('joinPrivateRoom', "success");
+        socket.to(roomCode).emit("new user");
       })
       .catch((error) => {
         console.log(error);
@@ -60,6 +61,7 @@ io.on('connection', (socket) => {
       .then(() => {
         console.log(`${username} added to ${roomCode}`);
         socket.emit('joinWithCode', "success");
+	socket.to(roomCode).emit("new user");
       })
       .catch((error) => {
         console.log(error);
