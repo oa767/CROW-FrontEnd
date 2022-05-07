@@ -1,0 +1,17 @@
+{
+  "name": "CROW server",
+  "version": "0.0.0",
+  "main": "server.js",
+  "private": true,
+  "license": "BSD",
+  "scripts": {
+    "start": "node server.js",
+    "pushToHeroku": "cd ../ && git subtree push --prefix Server heroku master || true"
+  },
+  "dependencies": {
+    "axios": "^0.27.2",
+    "eiows": "^4.0.1",
+    "express": "^4.18.1",
+    "socket.io": "^4.0.0"
+  }
+}
