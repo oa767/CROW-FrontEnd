@@ -65,7 +65,7 @@ io.on('connection', (socket) => {
       })
       .catch((error) => {
         console.log(error);
-	socket.emit('joinWithCode', "This roomcode is invalid.");
+	socket.emit('joinWithCode', "invalid");
       });
 
     console.log("User " + socket.id + "  has joined private room " + roomCode);

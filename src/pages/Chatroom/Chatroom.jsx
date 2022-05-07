@@ -22,6 +22,7 @@ export default function Chatroom() {
 
   const [alert, setAlert] = useState(undefined);
   const [alertBoxOpen, setAlertBoxOpen] = useState(false);
+  const [numUsers, setNumUsers] = useState(0);
 
   const getRoomData = async() => {
     await axios.get('https://crow249.herokuapp.com/rooms/list')
@@ -42,16 +43,14 @@ export default function Chatroom() {
   }
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      getRoomData();
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [getRoomData]);
+    getRoomData();
+  }, []);
 
   useEffect(() => {
     socket.on("new user", () => {
       setAlert("New User Joined");
       setAlertBoxOpen(true);
+      setNumUsers(numUsers + 1);
     })
   });
 
