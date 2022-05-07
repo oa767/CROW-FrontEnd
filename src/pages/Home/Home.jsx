@@ -124,6 +124,12 @@ export default function Home(){
         setGlobalState('username', username);
         history.push(path.concat(roomCode));
       }	
+      else {
+        console.log(message);
+	setRoomCode('');
+        setAlert(message);
+        setAlertBoxOpen(true);
+      }
     })
   }
 
