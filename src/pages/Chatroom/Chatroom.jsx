@@ -44,11 +44,11 @@ export default function Chatroom() {
 
   useEffect(() => {
     getRoomData();
-  }, []);
+  }, [numUsers]);
 
   useEffect(() => {
     socket.on("new user", () => {
-      setAlert("New User Joined");
+      setAlert(message);
       setAlertBoxOpen(true);
       setNumUsers(numUsers + 1);
     })
@@ -58,7 +58,7 @@ export default function Chatroom() {
     const timeout = setTimeout(() => {
       setAlertBoxOpen(false);
       setAlert(undefined);
-    }, 100 * alert.length);
+    }, 3000);
     return () => clearTimeout(timeout);
   }, [alert]);
 
