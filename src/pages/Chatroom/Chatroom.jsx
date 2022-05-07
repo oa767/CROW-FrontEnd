@@ -76,7 +76,7 @@ export default function Chatroom() {
             >
               &times;
             </span>
-            <strong> Alert! </strong> {alert.toString()}
+            {alert.toString()}
           </div>
         </div>
       }
