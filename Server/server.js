@@ -1,17 +1,16 @@
 const axios = require('axios').default;
-const express = require("express");
-const { createServer } = require("http");
-const { Server } = require("socket.io");
+
+const app = require("express")();
+const httpServer = require("http").createServer(app);
+const {Server} = require("socket.io");
+
+const options = {
+		  cors: { origin: '*' },
+		  wsEngine: require("eiows").Server
+		};
+const io = new Server(httpServer, options);
 
 const port = process.env.PORT || 8080;
-
-const app = express();
-const httpServer = createServer(app);
-const io = new Server(httpServer, {
-  cors: {
-    origin: '*'
-  }
-});
 
 let rooms = {
   roomCode: {
@@ -83,6 +82,6 @@ io.on('connection', (socket) => {
   });
 });
 
-io.listen(port)
+httpServer.listen(port)
 console.log('Listening on port ' + port + '...')
 
