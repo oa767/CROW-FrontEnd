@@ -19,32 +19,34 @@ function App() {
 		-chatrooms in the middle
 	  */
     <SocketContext.Provider value={socket}>
-      <div className="root">
-        <div className="content">
-          <Router>
-            <Switch>
-              <Route exact={true} path={'/'}>
-                <Home />
-              </Route>
-              <Route exact={true} path={'/rooms'}>
-                <Rooms />
-              </Route>
-              <Route exact={true} path={'/users'}>
-                <Users />
-              </Route>
-    	      <Route exact={true} path={'/usernameChoice/usernames'}>
-	        <Usernames />
-              </Route>
-              <Route exact={true} path={'/usernameChoice'}>
-	        <UsernameChoice />
-	      </Route>
-              <Route path={'/chatroom/:roomID'}>
-                <Chatroom />
-              </Route>
-            </Switch>
-          </Router>
+      {socket &&
+        <div className="root">
+          <div className="content">
+            <Router>
+              <Switch>
+                <Route exact={true} path={'/'}>
+                  <Home />
+                </Route>
+                <Route exact={true} path={'/rooms'}>
+                  <Rooms />
+                </Route>
+                <Route exact={true} path={'/users'}>
+                  <Users />
+                </Route>
+    	        <Route exact={true} path={'/usernameChoice/usernames'}>
+	          <Usernames />
+                </Route>
+                <Route exact={true} path={'/usernameChoice'}>
+	          <UsernameChoice />
+	        </Route>
+                <Route path={'/chatroom/:roomID'}>
+                  <Chatroom />
+                </Route>
+              </Switch>
+            </Router>
+          </div>
         </div>
-      </div>
+      }
     </SocketContext.Provider>
   );
 }

@@ -23,6 +23,9 @@ export default function Chatroom() {
   const [alert, setAlert] = useState(undefined);
   const [alertBoxOpen, setAlertBoxOpen] = useState(false);
   const [numUsers, setNumUsers] = useState(0);
+  const [message, setMessage] = useState('');
+
+  const [roomName, setRoomName] = useState('');
 
   const getRoomData = async() => {
     await axios.get('https://crow249.herokuapp.com/rooms/list')
@@ -32,6 +35,8 @@ export default function Chatroom() {
             if (response.data[i]._id.$oid === roomID) {
               setData(response.data[i]);
               console.log(response.data[i]);
+	      setRoomName(response.data[i].room_name);
+	      console.log(response.data[i].room_name);
               setIsLoading(false);
             }
 	  }
@@ -42,23 +47,75 @@ export default function Chatroom() {
       })
   }
 
-  useEffect(() => {
-    getRoomData();
-  }, []);
+  const sendMessage = () => {
+    if (message.length >= 1) {
+      socket.emit("send message", message, username, roomName, roomCode);
+      socket.on("send message", (message) => {
+        console.log(message);
+	return;
+      });
+      var list = document.getElementById('chatwindow');
+      var messageContainer = document.createElement('div');
+      messageContainer.classList.add('messageContainer');
+      var newMessage = document.createElement('div');
+      newMessage.classList.add('message');
+      newMessage.innerHTML = `<strong> You </strong>: ${message}`;
+      newMessage.style.backgroundColor = "#" + sessionStorage.getItem("messageColor");
+      messageContainer.appendChild(newMessage);
+      list.appendChild(messageContainer);
+      list.scrollTop = list.scrollHeight;
+      setMessage('');
+    }
+    setMessage('');
+  }
 
   useEffect(() => {
-    socket.on("new user", () => {
-      setAlert("New user joined");
+    socket.on("new user", (newUserName) => {
+      setAlert(`New user ${newUserName} joined`);
       setAlertBoxOpen(true);
       setNumUsers(numUsers + 1);
     })
+    socket.on("receive message", (sender, receivedMessage) => {
+      var list = document.getElementById('chatwindow');
+      var messageContainer = document.createElement('div');
+      messageContainer.classList.add('messageContainer');
+      var newMessage = document.createElement('div');
+      newMessage.classList.add('message');
+      newMessage.innerHTML = `<strong> You </strong>: ${receivedMessage}`;
+      newMessage.style.backgroundColor = "#" + sessionStorage.getItem("messageColor");
+      messageContainer.appendChild(newMessage);
+      list.appendChild(messageContainer);
+      list.scrollTop = list.scrollHeight;
+      setMessage('');
+    })
   });
+
+  useEffect(() => {
+    var color;
+    do {
+      color = Math.floor(Math.random()*16777215).toString(16);
+      sessionStorage.setItem("messageColor", Math.floor(Math.random()*16777215).toString(16));
+    }
+    while (color == "000000");
+  }, []);
+
+  useEffect(() => {
+    getRoomData();
+  }, [numUsers]);
+
+  useEffect(() => {
+    if (!isLoading && username !== '' && roomCode != '' && userId != '') {
+      sessionStorage.setItem("username", username);
+      sessionStorage.setItem("roomCode", roomCode);
+      sessionStorage.setItem("userId", userId);
+    }
+  }, [isLoading]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
       setAlertBoxOpen(false);
       setAlert(undefined);
-    }, 3000);
+    }, 4000);
     return () => clearTimeout(timeout);
   }, [alert]);
 
@@ -66,7 +123,7 @@ export default function Chatroom() {
     <>
       {alertBoxOpen &&
         <div className="alertContainer">
-          <div className="alert">
+          <div className="alert" style={{backgroundColor: '#6ab68a'}}>
             <span
               className="closebtn"
               onClick={() => {
@@ -76,7 +133,7 @@ export default function Chatroom() {
             >
               &times;
             </span>
-            {alert.toString()}
+            <strong> Notification: </strong> {alert.toString()}
           </div>
         </div>
       }
@@ -110,13 +167,23 @@ export default function Chatroom() {
               </div>
             </div>
             <div className="chatContainer">
-              <div className="chatWindow"></div>
-              <div className="chatbar">
-                <input
-	          className="chatInput"
-                  placeholder="Type a message"
-                />
-              </div>
+              <div className="chatWindow" id="chatwindow"></div>
+	      <form
+	        onSubmit={(e) => {
+		  e.preventDefault();		    
+		  sendMessage(message);
+                }}
+	      >
+		<div className="chatbar">
+                  <input
+	            className="chatInput"
+                    placeholder="Type a message"
+		    value={message}
+		    onChange={(e) => setMessage(e.target.value)}
+                  />
+		  <button className="messageSubmit" type="submit"> Send </button>
+		</div>
+              </form>
             </div>
           </div>
         </div>

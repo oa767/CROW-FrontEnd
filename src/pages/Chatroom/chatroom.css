@@ -51,6 +51,19 @@
   gap: 1.182vw;
 }
 
+.messageContainer {
+  width: 100%;
+  display: flex;
+}
+
+.message {
+  padding: 20px;
+  color: white;
+  border-radius: 15px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
 .sideBarContainer {
   box-sizing: border-box;
   width: 20.827vw;
@@ -82,6 +95,8 @@
   border-radius: 25px;
   background-color: white;
   margin-bottom: 2.21vh;
+  padding: 10px 20px 10px 20px;
+  overflow-y: scroll;
 }
 
 .chatContainer {
@@ -99,11 +114,14 @@
   min-height: 10vh;
   border-radius: 25px;
   background-color: #246964;
+  display: flex;
+  flex-direction: row;
+  gap: 7px;
 }
 
 .chatInput {
   width: 100%;
-  height: 100%;
+  height: 10vh;
   border-radius: 25px;
   font-size: 100%;
   padding-bottom: 0.691vh;
@@ -111,3 +129,17 @@
   padding-left: 0.369vw;
   padding-right: 0.369vw;
 }
+
+.messageSubmit {
+  width: 75px;
+  border-radius: 25px;
+  font-size: 100%;
+  background-color: #6ab68a;
+  color: white;
+  border: none;
+}
+
+.messageSubmit:hover {
+  background-color: #53916d;
+}
+
