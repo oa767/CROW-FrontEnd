@@ -36,7 +36,7 @@ io.on('connection', (socket) => {
   console.log("Connected to client: " + socket.id);  
 
   socket.on("send message", async(message, username, roomName, roomCode) => {
-    await axios.get(`https://crow249.herokuapp.com/users/list/${roomName})
+    await axios.get(`https://crow249.herokuapp.com/users/list/${roomName}`)
       .then((response) => {
 	if (response.data) {
           for (var i = 0; i < response.data.length; ++i) {
@@ -51,11 +51,11 @@ io.on('connection', (socket) => {
         else {
 	  socket.emit("send message", "failed");
         }
-     }
+      })
      .catch(error => {
 	console.log(error);
 	socket.emit("send message", "failed");
-     }
+     })
   });
 
   socket.on('joinPrivateRoom', async(username, userId, roomCode) => {
