@@ -15,108 +15,84 @@ const port = process.env.PORT || 8080;
 let rooms = {
   roomCode: {
     owner: '',
-    users: {
-      username: {
-	sockId: '',
-        userId: '',
-      }
-    }
+    users: [],
   }
 };
 
-let messages = {
-  roomCode: {}
-}
-
 let userMessages = {
-  username: {}
-}
+  userId: [],
+};
 
 io.on('connection', (socket) => {
-  console.log("Connected to client: " + socket.id);  
+  let addedUser = false;
+  console.log(`Connected to client: ${socket.id}`);    
 
-  socket.on("send message", async(message, username, roomName, roomCode) => {
-    await axios.get(`https://crow249.herokuapp.com/users/list/${roomName}`)
-      .then((response) => {
-	if (response.data) {
-          for (var i = 0; i < response.data.length; ++i) {
-            if (response.data[i].user_name == username) {
-	      console.log(`${username} successfuly sent message to ${socket.roomCode}`);
-	      messages[roomCode] = {Time: new Date(), User: username, Message: message};
-	      userMessages[username] = {Time: newDate(), Message: message};
-	      socket.to(roomCode).emit("receive message", username, message);
-	    }
-          }
+  socket.on("check activity", () => {
+    if (userMessages[socket.userId]) {
+      if (userMessages[socket.userId].length >= 1) {
+        const lastMessage = userMessages[socket.userId][userMessages[socket.userId].length - 1];
+	const currentTime = new Date();
+        if ((currentTime.getHours() * 60 + currentTime.getMinutes()) -
+             (lastMessage.getHours() * 60 + lastMessage.getMinutes()) >= 20) {
+                console.log(`boot ${socket.username}`);
+		socket.emit("inactive");
+	        socket.to(socket.roomCode).emit("inactive left", socket.username);
         }
-        else {
-	  socket.emit("send message", "failed");
+      }
+      else {
+        const currentTime = new Date();
+        if ((currentTime.getHours() * 60 + currentTime.getMinutes()) -
+             (socket.joined.getHours() * 60 + socket.joined.getMinutes()) >= 20) {
+                console.log(`boot ${socket.username}`);
+                socket.emit("inactive");
+		socket.to(socket.roomCode).emit("inactive left", socket.username);
         }
-      })
-     .catch(error => {
-	console.log(error);
-	socket.emit("send message", "failed");
-     })
+      }
+    }
   });
 
-  socket.on('joinPrivateRoom', async(username, userId, roomCode) => {
-    rooms[roomCode] = {};
+  socket.on('send message', async(message, username, roomName, roomCode) => {
+    userMessages[socket.userId].push(new Date());
+    console.log(`${username} successfuly sent message to ${socket.roomCode}`);
+    socket.to(roomCode).emit("receive message", username, message);
+  });
+
+  socket.on("joining room", (userId, username, roomCode, roomName) => {
+    socket.userId = userId;
+    socket.username = username;
+    socket.roomCode = roomCode;
+    socket.roomName = roomName;
+    
+    if (!rooms[roomCode]) {
+      rooms[roomCode] = {};
+      rooms[roomCode].users = [];
+    }
+
+    addedUser = true;   
     rooms[roomCode].owner = userId;
-    rooms[roomCode].users = {};
-    rooms[roomCode].users[username] = {};
-    rooms[roomCode].users[username].sockId = socket.id;
-    rooms[roomCode].users[username].userId = userId;
+    rooms[roomCode].users.push(userId);
+    userMessages[userId] = [];
     socket.join(roomCode);
+    socket.joined = new Date();
 
-    socket.username = username;
-    socket.userId = userId;
-    socket.roomCode = roomCode;
-
-    await axios.post(`https://crow249.herokuapp.com/rooms/join/${roomCode}/${username}`)
-      .then(() => {
-	console.log(`${username} added to ${roomCode}`);
-        socket.emit('joinPrivateRoom', "success");
-        socket.to(roomCode).emit("new user", "username");
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-
-    console.log("Created private room " + roomCode + " owned by " + socket.id);
+    socket.to(roomCode).emit("new user", username);
   });
 
-  socket.on('joinWithCode', async(username, userId, roomCode) => {
-    rooms[roomCode].users[username] = {};
-    rooms[roomCode].users[username].sockId = socket.id;
-    rooms[roomCode].users[username].userId = userId;
-    socket.join(roomCode);
-
-    socket.username = username;
-    socket.userId = userId;
-    socket.roomCode = roomCode;
-
-    await axios.post(`https://crow249.herokuapp.com/rooms/join/${roomCode}/${username}`)
-      .then(() => {
-        console.log(`${username} added to ${roomCode}`);
-        socket.emit('joinWithCode', "success");
-	socket.to(roomCode).emit("new user");
-      })
-      .catch((error) => {
-        console.log(error);
-	socket.emit('joinWithCode', "invalid");
-      });
-
-    console.log("User " + socket.id + "  has joined private room " + roomCode);
+  socket.on("remove inactive", () => {
+    delete rooms[socket.roomCode].users[socket.userId];
+    delete userMessages[socket.userId];
+    socket.leave(socket.roomCode);
+    socket.disconnect();
   });
 
   socket.on('disconnect', () => {
-    console.log('Disconnected from Client...');
+    console.log(`Disconnected from Client: ${socket.id}`);
     if (addedUser) {
-      --numUsers;
-
-      socket.broadcast.emit('user left', {
-        username: socket.username,
-        numUsers: numUsers
-      });
+      delete rooms[socket.roomCode].users[socket.userId];
+      delete userMessages[socket.userId];
+      socket.to(socket.roomCode).emit('user left', socket.username);
+      socket.leave(socket.roomCode);
+      socket.disconnect();
     }
   });
 });

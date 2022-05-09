@@ -1,8 +1,7 @@
-import React, {useState, useEffect, useContext} from 'react';
-import axios from 'axios';
+import React, {useState, useEffect} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
-import {useGlobalState} from '../../state';
-import {SocketContext} from '../../context/socket';
+import axios from 'axios';
+import {io} from 'socket.io-client';
 
 import './chatroom.css';
 
@@ -11,11 +10,12 @@ export default function Chatroom() {
   const params = useParams();
   const roomID = params.roomID;
 
-  const socket = useContext(SocketContext);
+  const username = sessionStorage.getItem("username");
+  const roomCode = sessionStorage.getItem("roomCode");
+  const userId = sessionStorage.getItem("userId");
+  const roomName = sessionStorage.getItem("roomName");
 
-  const [username, setUsername] = useGlobalState('username');
-  const [roomCode, setRoomCode] = useGlobalState('roomCode');
-  const [userId, setUserId] = useGlobalState('userId');
+  const [socket, setSocket] = useState(null);
 
   const [data, setData] = useState(undefined);
   const [isLoading, setIsLoading] = useState(true);
@@ -25,99 +25,147 @@ export default function Chatroom() {
   const [numUsers, setNumUsers] = useState(0);
   const [message, setMessage] = useState('');
 
-  const [roomName, setRoomName] = useState('');
-
-  const getRoomData = async() => {
-    await axios.get('https://crow249.herokuapp.com/rooms/list')
-      .then((response) => {
-	if (response.data) {
-	  for (var i = 0; i < response.data.length; ++i) {
-            if (response.data[i]._id.$oid === roomID) {
-              setData(response.data[i]);
-              console.log(response.data[i]);
-	      setRoomName(response.data[i].room_name);
-	      console.log(response.data[i].room_name);
-              setIsLoading(false);
-            }
-	  }
-        }
-      })
-      .catch(error => {
-	console.log(error);
-      })
-  }
+  const [authenticated, setAuthenticated] = useState(false);
+  const [connected, setConnected] = useState(false);
 
   const sendMessage = () => {
     if (message.length >= 1) {
       socket.emit("send message", message, username, roomName, roomCode);
       socket.on("send message", (message) => {
         console.log(message);
+        setAlert(message);
+	setAlertBoxOpen(true);
 	return;
       });
+
       var list = document.getElementById('chatwindow');
       var messageContainer = document.createElement('div');
-      messageContainer.classList.add('messageContainer');
+      messageContainer.classList.add('messageContainerSend');
       var newMessage = document.createElement('div');
       newMessage.classList.add('message');
+      newMessage.style.backgroundColor = "#4297e1";
       newMessage.innerHTML = `<strong> You </strong>: ${message}`;
-      newMessage.style.backgroundColor = "#" + sessionStorage.getItem("messageColor");
       messageContainer.appendChild(newMessage);
-      list.appendChild(messageContainer);
+      list.insertBefore(messageContainer, list.children[0]);
       list.scrollTop = list.scrollHeight;
       setMessage('');
     }
     setMessage('');
   }
 
-  useEffect(() => {
-    socket.on("new user", (newUserName) => {
-      setAlert(`New user ${newUserName} joined`);
-      setAlertBoxOpen(true);
-      setNumUsers(numUsers + 1);
-    })
-    socket.on("receive message", (sender, receivedMessage) => {
-      var list = document.getElementById('chatwindow');
-      var messageContainer = document.createElement('div');
-      messageContainer.classList.add('messageContainer');
-      var newMessage = document.createElement('div');
-      newMessage.classList.add('message');
-      newMessage.innerHTML = `<strong> You </strong>: ${receivedMessage}`;
-      newMessage.style.backgroundColor = "#" + sessionStorage.getItem("messageColor");
-      messageContainer.appendChild(newMessage);
-      list.appendChild(messageContainer);
-      list.scrollTop = list.scrollHeight;
-      setMessage('');
-    })
-  });
+  useEffect(function callback() {
+    axios.get('https://crow249.herokuapp.com/rooms/list')
+      .then((response) => {
+        if (response.data) {
+          for (var i = 0; i < response.data.length; ++i) {
+            if (response.data[i]._id.$oid === roomID) {
+              setData(response.data[i]);
+   	      sessionStorage.setItem("roomName", response.data[i].room_name);
+              console.log(response.data[i].room_name);
+	      setIsLoading(false);
+            }
+          }
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      })
+  }, [numUsers, roomID]);
 
   useEffect(() => {
-    var color;
-    do {
-      color = Math.floor(Math.random()*16777215).toString(16);
-      sessionStorage.setItem("messageColor", Math.floor(Math.random()*16777215).toString(16));
+      axios.get('https://crow249.herokuapp.com/users/list')
+      .then((response) => {
+        if (response.data) {
+          for (var i = 0; i < response.data.length; ++i) {
+            if (response.data[i]._id.$oid === userId) {
+              setAuthenticated(true);
+            }
+          }
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      })
+  }, [socket, numUsers, userId]);
+
+  useEffect(() => {
+    if (authenticated & !socket) {
+      setSocket(io("http://localhost:8080"));
+      setConnected(true);
     }
-    while (color == "000000");
-  }, []);
+  }, [authenticated]);
 
   useEffect(() => {
-    getRoomData();
-  }, [numUsers]);
-
-  useEffect(() => {
-    if (!isLoading && username !== '' && roomCode != '' && userId != '') {
-      sessionStorage.setItem("username", username);
-      sessionStorage.setItem("roomCode", roomCode);
-      sessionStorage.setItem("userId", userId);
+    if (authenticated && connected) {
+      socket.emit("joining room", userId, username, roomCode, roomName);
     }
-  }, [isLoading]);
+  }, [socket, authenticated, connected]);
+
+  useEffect(() => {
+    if (socket) {
+      socket.on("new user", (newUserName) => {
+        setAlert(`'${newUserName}' has joined this room`);
+        setAlertBoxOpen(true);       
+        setNumUsers(numUsers => numUsers + 1);
+      })
+      socket.on("receive message", (sender, receivedMessage) => {
+        var list = document.getElementById('chatwindow');
+        var messageContainer = document.createElement('div');
+        messageContainer.classList.add('messageContainerReceive');
+        var newMessage = document.createElement('div');
+        newMessage.classList.add('message');
+        newMessage.style.backgroundColor = "#50a368"
+        newMessage.innerHTML = `<strong> ${sender} </strong>: ${receivedMessage}`;
+        messageContainer.appendChild(newMessage);
+        list.insertBefore(messageContainer, list.children[0]);
+        list.scrollTop = list.scrollHeight;
+        setMessage('');
+      })
+      socket.on("inactive", () => {
+        setAlert("You are about to be removed due to inactivity. Send a message to stay active");
+        setAlertBoxOpen(true);
+        axios.put(`https://crow249.herokuapp.com/users/remove/${username}/${roomName}`)
+	  .then((response) => {
+	    console.log(response);
+	    socket.emit("remove inactive");
+	    setNumUsers(numUser => numUsers - 1);
+	    history.push('/');
+          })
+	  .catch(error => {
+	    console.log(error);
+          })		
+      })
+      socket.on("inactive left", (inactiveUser) => {
+	setAlert(`${inactiveUser} has been removed due to inactivity`);
+	setAlertBoxOpen(true);
+      })
+      socket.on("user left", (departingUser) => {
+        setAlert(`${departingUser} has left the room`);
+        setAlertBoxOpen(true);
+      })
+      return () => {
+        socket.removeAllListeners();
+      }
+    }
+  }, [socket]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
       setAlertBoxOpen(false);
       setAlert(undefined);
-    }, 4000);
+    }, 3000);
     return () => clearTimeout(timeout);
   }, [alert]);
+
+  useEffect(() => {
+    if (authenticated && connected) {
+      const interval = setInterval(() => {
+        socket.emit("check activity");
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [socket, authenticated, connected]);
+    
 
   return (
     <>
@@ -137,13 +185,13 @@ export default function Chatroom() {
           </div>
         </div>
       }
-      {!isLoading &&
+      {!isLoading && authenticated &&
         <div className="content chatroom">
           <div className="topBarContainer">
             <div className="topBar">
               <button
                 className="topBarTitle chatroom"
-                onClick={() => history.push('/')}
+                onClick={() => { socket.disconnect(); history.push('/');}}
               >
                 Crow
               </button>
