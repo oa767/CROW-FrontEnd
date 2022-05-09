@@ -90,7 +90,7 @@ export default function Chatroom() {
 
   useEffect(() => {
     if (authenticated & !socket) {
-      setSocket(io("http://localhost:8080"));
+      setSocket(io("https://crow-frontend.herokuapp.com"));
       setConnected(true);
     }
   }, [authenticated]);
@@ -128,7 +128,7 @@ export default function Chatroom() {
 	  .then((response) => {
 	    console.log(response);
 	    socket.emit("remove inactive");
-	    setNumUsers(numUser => numUsers - 1);
+	    setNumUsers(numUsers => numUsers - 1);
 	    history.push('/');
           })
 	  .catch(error => {
@@ -166,6 +166,9 @@ export default function Chatroom() {
     }
   }, [socket, authenticated, connected]);
     
+  useEffect(() => {
+    return () => socket.disconnect();
+  }, []);
 
   return (
     <>
