@@ -1,11 +1,7 @@
-import {setGlobalState, useGlobalState} from '../../state';
-import React, {useState, useEffect, useContext, useRef} from 'react';
-import {SocketContext} from '../../context/socket';
+import React, {useState, useEffect} from 'react';
 import {useHistory} from 'react-router-dom';
 import homeImage from './homeLogo.png';
-import {io} from 'socket.io-client';
 import axios from 'axios';
-
 import './home.css';
 
 export default function Home(){
@@ -25,9 +21,13 @@ export default function Home(){
   const [roomCode, setRoomCode] = useState('');
   const [username, setUsername] = useState('');
 
-  const socket = useContext(SocketContext);
-
   var path = '/chatroom/';
+
+  const storeInfo = () => {
+    sessionStorage.setItem("roomName", roomName);
+    sessionStorage.setItem("roomCode", roomCode);
+    sessionStorage.setItem("username", username);
+  }
 
   const createRoom = async() => {
     await axios.post(`https://crow249.herokuapp.com/rooms/create/${roomName}`)
@@ -67,7 +67,8 @@ export default function Home(){
 	if (response.data) {
 	  for (var i = 0; i < response.data.length; ++i) {
 	    if (response.data[i].user_name === username) {
-	      localStorage.setItem("userId", response.data[i]._id);
+	      sessionStorage.setItem("userId", response.data[i]._id.$oid);
+	      console.log(`userId ${response.data[i]._id.$oid}`);
             }
           }
 	}
@@ -77,70 +78,66 @@ export default function Home(){
       })
   }
 
+  const joinRoom = (code) => {
+    axios.post(`https://crow249.herokuapp.com/rooms/join/${code}/${username}`)
+      .then(() => {
+	console.log(`${username} added to ${code}`);
+      })
+      .catch((error) => {
+        console.log(error.response.data.message);
+        setAlert(error.response.data.message);
+        localStorage.setItem("alert", "true");
+        setUsername('');
+	setRoomName('');
+        setAlertBoxOpen(true);
+      })
+  }
+ 
   const handleJoinPrivateRoom = async() => {
-    const room = await createRoom();
+    await createRoom();
     if (JSON.parse(localStorage.getItem("alert")) === true) {
       localStorage.removeItem("alert");
       return;
     }
 
-    const user = await createUser();
+    await createUser();
     if (JSON.parse(localStorage.getItem("alert")) === true) {
       localStorage.removeItem("alert");
       return;
     }
 
-    const user_id = await getUserId();
+    await getUserId();
     const code = await getRoomCode(roomName)
                    .catch((error) => { console.log(error); setAlert(error); });
     console.log(code.data);
     setRoomCode(code.data);
-    socket.emit('joinPrivateRoom', username, localStorage.getItem("userId"), code.data);
-    socket.on('joinPrivateRoom', (message) => {
-      console.log(message);
-      setGlobalState('userId', localStorage.getItem("userId"));
-      localStorage.removeItem("userId");      
-      setGlobalState('roomCode', code.data);
-      setGlobalState('username', username);
-      history.push(path.concat(code.data));
-    })
+    
+    await joinRoom(code.data);      
+    storeInfo();
+    sessionStorage.setItem("roomCode", code.data);
+    history.push(path.concat(code.data));
   }
-
+ 
   const handleJoinWithCode = async() => {
-    const user = createUser();
+    createUser();
     if (JSON.parse(localStorage.getItem("alert")) === true) {
       localStorage.removeItem("alert");
       return;
     }
 
-    const user_id = await getUserId();
-    socket.emit('joinWithCode', username, localStorage.getItem("userId"), roomCode);
-    socket.on('joinWithCode', (message) => {
-      if (message === "success") {
-	console.log(message);
-        setGlobalState('userId', localStorage.getItem("userId"));
-        localStorage.removeItem("userId");
-        setGlobalState('roomCode', roomCode);
-        setGlobalState('username', username);
-        history.push(path.concat(roomCode));
-      }	
-      else {
-        console.log(message);
-	setRoomCode('');
-        setAlert(message);
-        setAlertBoxOpen(true);
-      }
-    })
+    await getUserId();
+
+    await joinRoom(roomCode);
+    storeInfo();
+    history.push(path.concat(roomCode));
   }
 
   const callJoinWithInterests = () => {
     console.log(interestsArray.join(","));
     axios.post(`https://crow249.herokuapp.com/rooms/join/interests/${username}?interests=${interestsArray.join(",")}`)
       .then((response) => {
- 	console.log(Object.values(response.data).join(''));
-        
+ 	console.log(Object.values(response.data).join(''));    
         setIsInterestModalOpen(false);
-
  	sessionStorage.setItem('roomName', Object.values(response.data)[0]);
       })        
       .catch(error => {
@@ -156,7 +153,6 @@ export default function Home(){
 			.catch((error) => {console.log(error); setAlert(error);});
       console.log(code.data);
       setRoomCode(code.date);
-      setGlobalState('privateRoom', code.data);
       sessionStorage.removeItem('roomName');
       history.push(path.concat(code.data));
     }
@@ -175,12 +171,6 @@ export default function Home(){
     }, 3000);
     return () => clearTimeout(timeout);
   }, [alert])
-
-  useEffect(() => {
-    socket.on("connect", () => {
-      console.log(`User connected: ${socket.id}`);
-    })
-  }, []);
 
   return (
 	  /* The home page has 4 key functions as the introduction to the website

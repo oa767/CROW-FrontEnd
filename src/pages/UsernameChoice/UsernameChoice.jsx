@@ -2,7 +2,6 @@ import React, {useState, useEffect} from 'react';
 import {useHistory} from 'react-router-dom';
 import axios from 'axios';
 
-
 import './usernameChoice.css';
 import '../Home/home.css';
 
@@ -18,27 +17,56 @@ export default function UsernameChoice() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [username, setUsername] = useState(randomUsername);
-  const [randomRoom, setRandomRoom] = useState("");
+  const [roomCode, setRoomCode] = useState("");
+  const [roomName, setRoomName] = useState("");
+
+  const [alert, setAlert] = useState(undefined);
+  const [alertBoxOpen, setAlertBoxOpen] = useState(false);
 
   const path = '/chatroom/';
 
-  const createUserJoinRoom = () => {
-    axios.post(`https://crow249.herokuapp.com/users/create/${username}`)
+  const storeInfo = () => {
+    sessionStorage.setItem("roomName", roomName);
+    sessionStorage.setItem("roomCode", roomCode);
+    sessionStorage.setItem("username", username);
+  }
+
+  const getUserId = async() => {
+    await axios.get('https://crow249.herokuapp.com/users/list')
       .then((response) => {
-	console.log(response.data);
-        setIsModalOpen(false);
- 	sessionStorage.setItem('username', username);
-        sessionStorage.setItem('privateRoom', false);
-        sessionStorage.setItem('newUser', true);
+        if (response.data) {
+          for (var i = 0; i < response.data.length; ++i) {
+            if (response.data[i].user_name === username) {
+              sessionStorage.setItem("userId", response.data[i]._id.$oid);
+              console.log(`userId ${response.data[i]._id.$oid}`);
+            }
+          }
+        }
       })
       .catch(error => {
         console.log(error);
       })
-    axios.post(`https://crow249.herokuapp.com/rooms/join/${randomRoom}/${username}`)
+  }
+
+  const createUserJoinRoom = async () => {
+    await axios.post(`https://crow249.herokuapp.com/users/create/${username}`)
+      .then(() => {
+        console.log(`${username} created`);
+      })
+      .catch(error => {
+        console.log(error.response.data.message);
+        setAlert(error.response.data.message);
+        setUsername('');
+        setAlertBoxOpen(true);
+      })
+    
+    getUserId();
+
+    axios.post(`https://crow249.herokuapp.com/rooms/join/${roomCode}/${username}`)
       .then((response) => {
         console.log(response.data);
-	console.log(path.concat(randomRoom))
-        navigateToPage(path.concat(randomRoom));
+	storeInfo();
+        navigateToPage(path.concat(roomCode));
       })
       .catch(error => {
         console.log(error);
@@ -49,15 +77,35 @@ export default function UsernameChoice() {
     return axios.get('https://crow249.herokuapp.com/rooms/list');
   }
 
-  useEffect(async() => {
-    const rooms = await getRooms()
-			.catch((error) => console.log(error));
-
-    setRandomRoom(rooms.data[Math.floor(Math.random()*rooms.data.length)]._id.$oid);
+  useEffect(() => {
+    async function fetchRooms() {
+      const rooms = await getRooms()
+			    .catch((error) => console.log(error));
+      const randomRoom = rooms.data[Math.floor(Math.random()*rooms.data.length)];
+      setRoomCode(randomRoom._id.$oid);
+      setRoomName(randomRoom.room_name);
+    }
+    fetchRooms();
   }, [])
 
   return (
     <>
+      {alertBoxOpen &&
+        <div className="alertContainer">
+          <div className="alert">
+            <span
+              className="closebtn"
+              onClick={() => {
+                setAlert(undefined);
+                setAlertBoxOpen(false);
+              }}
+            >
+              &times;
+            </span>
+            <strong> Alert! </strong> {alert.toString()}
+          </div>
+        </div>
+      }
       <div style={{paddingTop: "150px", paddingBottom: "20px"}}>
 	<button
           onClick={() => history.push('/')}
@@ -70,7 +118,7 @@ export default function UsernameChoice() {
       <div className="buttonContainer choice">
         {isModalOpen &&
           <div className="createUsernameModal">
-     	    <form onSubmit={(e) => {createUserJoinRoom(); e.preventDefault();}}>
+     	    <form onSubmit={(e) => {e.preventDefault(); createUserJoinRoom();}}>
 	      <div className="modalContent">
                 <input
                   className="usernameInput choice"
@@ -103,7 +151,7 @@ export default function UsernameChoice() {
         </button>
         <button
           onClick={() => {
-	    sessionStorage.setItem("roomCode", randomRoom);
+	    sessionStorage.setItem("roomCode", roomCode);
 	    navigateToPage('/usernameChoice/usernames');
 	  }}
 	  className="homePageButton choice"
